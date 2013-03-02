@@ -173,9 +173,9 @@ $db->prepare('title = :title', array(':title' => "PHP's Power"));
 
 // Output: mysqli_result Object(...)
 $db->query("SELECT * FROM books");
-print $db->numRows;
 $db->query("INSERT INTO books VALUES('', 'Test', 1.3)");
 // Output: (int) n
+print $db->numRows;
 print $db->insertId;
 
 // Output: stdClass Object(...)
