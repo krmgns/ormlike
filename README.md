@@ -152,7 +152,7 @@ $booksArray = $books->toArray();
 - Loops (easy!)
 
 ```php
-// For "findAll" or "find"
+// For "findAll" (or "find" as well)
 $books = $booksObject->findAll('WHERE id IN(1,2,3)');
 foreach ($books as $book) {
     print $book->getTitle();
