@@ -3,7 +3,7 @@ Actually, I'm just trying to practice on the ORM concept. But it works, trust me
 **USAGE**
 
 1- Set your database connection infos here: `ORMLikeDatabaseAbstract::$_cfg`.<br>
-2- Be sure that PHP version >= 5.3.0
+2- Be sure that PHP version >= 5.3
 
 - Simple
 
