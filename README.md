@@ -83,17 +83,17 @@ $booksObject->set('title', 'PHP in Action');
 $booksObject->set('price', 14.55);
 
 /* Get */
-print $booksObject->getId(1);   // 1
-print $booksObject->getTitle(); // PHP in Action
-print $booksObject->getPrice(); // 14.55
+print $booksObject->getId(1);     // 1
+print $booksObject->getTitle();   // PHP in Action
+print $booksObject->getPrice();   // 14.55
 // or
-print $booksObject->id;         // 1
-print $booksObject->title;      // PHP in Action
-print $booksObject->price;      // 14.55
+print $booksObject->id;           // 1
+print $booksObject->title;        // PHP in Action
+print $booksObject->price;        // 14.55
 // or
-$booksObject->get('id');        // 1
-$booksObject->get('title');     // PHP in Action
-$booksObject->get('price');     // 14.55
+print $booksObject->get('id');    // 1
+print $booksObject->get('title'); // PHP in Action
+print $booksObject->get('price'); // 14.55
 ```
 
 - Set/Get fantastic field names (just a suggestion)
