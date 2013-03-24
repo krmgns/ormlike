@@ -17,10 +17,9 @@ $booksObject = new Books();
 
 /* Find one and print title */
 $book = $booksObject->find(1);
+// all available
 print $book->title;
-// or
 print $book->getTitle();
-// or
 print $book->get('title');
 
 /* Insert a book */
