@@ -83,7 +83,7 @@ $booksObject->set('title', 'PHP in Action');
 $booksObject->set('price', 14.55);
 
 /* Get */
-print $booksObject->getId(1);     // 1
+print $booksObject->getId();      // 1
 print $booksObject->getTitle();   // PHP in Action
 print $booksObject->getPrice();   // 14.55
 // or
