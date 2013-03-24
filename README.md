@@ -20,6 +20,8 @@ $book = $booksObject->find(1);
 print $book->title;
 // or
 print $book->getTitle();
+// or
+print $book->get('title');
 
 /* Insert a book */
 $booksObject->title = 'The PHP';
@@ -27,6 +29,9 @@ $booksObject->price = 11.59;
 // or
 $booksObject->setTitle('The PHP');
 $booksObject->setPrice(11.59);
+// or
+$booksObject->set('title', 'The PHP');
+$booksObject->set('price', 11.59);
 // save it!
 $booksObject->save();
 
@@ -39,6 +44,10 @@ $booksObject->price = 11.59;
 $booksObject->setId(1);
 $booksObject->setTitle('The PHP');
 $booksObject->setPrice(11.59);
+// or
+$booksObject->set('id', 1);
+$booksObject->set('title', 'The PHP');
+$booksObject->set('price', 11.59);
 // save it!
 $booksObject->save();
 
@@ -69,15 +78,23 @@ $booksObject->price = 14.55;
 $booksObject->setId(1);
 $booksObject->setTitle('PHP in Action');
 $booksObject->setPrice(14.55);
+// or
+$booksObject->set('id', 1);
+$booksObject->set('title', 'PHP in Action');
+$booksObject->set('price', 14.55);
 
 /* Get */
 print $booksObject->getId(1);   // 1
 print $booksObject->getTitle(); // PHP in Action
 print $booksObject->getPrice(); // 14.55
 // or
-print $booksObject->id;    // 1
-print $booksObject->title; // PHP in Action
-print $booksObject->price; // 14.55
+print $booksObject->id;         // 1
+print $booksObject->title;      // PHP in Action
+print $booksObject->price;      // 14.55
+// or
+$booksObject->get('id');        // 1
+$booksObject->get('title');     // PHP in Action
+$booksObject->get('price');     // 14.55
 ```
 
 - Set/Get fantastic field names (just a suggestion)
@@ -113,7 +130,7 @@ print $booksObject->last_update_date_unix_timestamp;
 $books = $booksObject->findAll('WHERE id IN(1,2,3)');
 // With external params (here we kick out WHERE)
 $books = $booksObject->findAll('id IN(?)', array(1,2,3));
-$books = $booksObject->findAll('title LIKE ?', "PHP's%"); // Yes, it's safe
+$books = $booksObject->findAll('title LIKE ?', "PHP's%"); // Yes, it's safe!
 
 foreach ($books as $book) {
     print $book->getTitle();

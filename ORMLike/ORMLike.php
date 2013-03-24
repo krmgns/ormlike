@@ -74,6 +74,25 @@ class ORMLike implements Countable, IteratorAggregate
     }
     
     /**
+     * Set entity property.
+     *
+     * @param String $key (required)
+     * @param Mixed $var (required)
+     */
+    public function set($key, $val) {
+        return $this->__set($key, $val);
+    }
+    
+    /**
+     * Get entity property.
+     *
+     * @param String $key (required)
+     */
+    public function get($key) {
+        return $this->__get($key);
+    }
+    
+    /**
      * Call a fake method of entity for a property (if entity property is exists).
      * Call a real method of entity (if method is exists).
      *

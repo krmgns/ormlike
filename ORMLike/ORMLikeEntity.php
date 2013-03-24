@@ -76,11 +76,12 @@ class ORMLikeEntity
         
         $act = substr($call, 0, 3);
         $var = lcfirst(substr($call, 3));
+        // Get methods for properties
         if ('get' === $act) {
-            // Get methods for properties
             return $this->__get($var);
-        } elseif ('set' === $act) {
-            // Set methods for properties
+        }
+        // Set methods for properties
+        if ('set' === $act) {
             return $this->__set($var, $args[0]);
         }
         
