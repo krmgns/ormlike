@@ -65,13 +65,13 @@ abstract class ORMLikeDatabaseAbstract
             return $this->_props[$var];
         }
         // Access other vars
-        $var = '_'. $var;
+        $var  = '_'. $var;
         $vars = get_object_vars($this);
         if (array_key_exists($var, $vars)) {
             return $this->$var;
         }
         // No property
-        throw new ORMLikeException('Undefined property : %s', $var);
+        throw new ORMLikeException('Undefined property : %s.', $var);
     }
     
     /**
@@ -83,7 +83,7 @@ abstract class ORMLikeDatabaseAbstract
     public function connect() {
         if (null === $this->_link) {
             if (!extension_loaded('mysqli')) {
-                throw new ORMLikeException('Mysqli extension is not loaded');
+                throw new ORMLikeException('Mysqli extension is not loaded.');
             }
             if (!$this->_link =@ mysqli_connect(
                     $this->_cfg['host'], $this->_cfg['user'], $this->_cfg['pass'], $this->_cfg['database'])) {
@@ -114,12 +114,12 @@ abstract class ORMLikeDatabaseAbstract
      * Reset self::$data, self::$_query and self::$_props.
      */
     public function reset() {
-		$this->data   = array();
-		$this->_query = '';
+        $this->data   = array();
+        $this->_query = '';
         foreach ($this->_props as $key => $dummy) {
             $this->_props[$key] = 0;
         }
-	}
+    }
     
     /**
      * Free self::$_result and set NULL.
@@ -151,8 +151,7 @@ abstract class ORMLikeDatabaseAbstract
         preg_match_all('~%[sdfF]|\?|:[a-zA-Z0-9_]+~', $sql, $match);
         if (isset($match[0])) {
             if (count($match[0]) != count($params)) {
-                throw new ORMLikeException(
-                    'No enough params for %s->prepare', get_class($this));
+                throw new ORMLikeException('No enough params for %s->prepare.', get_class($this));
             }
             $i = 0; // Indexes could be string, e.g: array(':id' => 1, ...)
             foreach ($params as $key => $val) {
@@ -175,10 +174,9 @@ abstract class ORMLikeDatabaseAbstract
      * @return String $input
      */
     public function escape($input, $type = null) {
-        // For all formatted types, e.g: ("id = %d", 1)
-        if (null !== $input && false !== strpos($type, '%')
-                && !is_array($input)) {
-            if ('%s' != $type) {
+        // For all formatted types, exepting %s. E.g: escape('id = %d', 1)
+        if (!is_array($input)) {
+            if (0 === strpos($type, '%') && '%s' !== $type) {
                 return sprintf($type, $input);
             }
             // Type-cast for gettype() below
