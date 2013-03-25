@@ -78,10 +78,8 @@ class ORMLikeDatabase extends ORMLikeDatabaseAbstract
         }
         
         // Stop time process
-        $this->_timerStop    = microtime(true);
-		$this->_timerProcess = number_format(
-			floatval($this->_timerStop - $this->_timerStart), 4
-		);
+        $this->_timerStop          = microtime(true);
+        $this->_timerProcess       = number_format(floatval($this->_timerStop - $this->_timerStart), 4);
         $this->_timerProcessTotal += $this->_timerProcess;
         
         return $this->_result;
