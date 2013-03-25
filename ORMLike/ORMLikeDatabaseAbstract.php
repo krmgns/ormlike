@@ -174,7 +174,7 @@ abstract class ORMLikeDatabaseAbstract
      * @return String $input
      */
     public function escape($input, $type = null) {
-        // For all formatted types, exepting %s. E.g: escape('id = %d', 1)
+        // For all formatted types, excepting %s. E.g: escape('id = %d', 1)
         if (!is_array($input)) {
             if (0 === strpos($type, '%') && '%s' !== $type) {
                 return sprintf($type, $input);
