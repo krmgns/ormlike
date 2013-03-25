@@ -148,8 +148,10 @@ class ORMLikeDatabase extends ORMLikeDatabaseAbstract
     public function insert($table, Array $data = array()) {
         $keys = $this->escapeIdentifier(array_keys($data));
         $vals = $this->escape(array_values($data));
-        $this->query(sprintf('INSERT INTO %s (%s) VALUES (%s)',
-                        $this->escapeIdentifier($table), join(', ', $keys), $vals));
+        $this->query(sprintf(
+            'INSERT INTO %s (%s) VALUES (%s)',
+                $this->escapeIdentifier($table), join(', ', $keys), $vals
+        ));
         
         // Set insert id
         $this->_props['insertId'] = $this->_link->insert_id;
