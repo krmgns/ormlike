@@ -179,8 +179,6 @@ abstract class ORMLikeDatabaseAbstract
             if (0 === strpos($type, '%') && '%s' !== $type) {
                 return sprintf($type, $input);
             }
-            // Type-cast for gettype() below
-            $input = (string) $input;
         }
         
         switch (gettype($input)) {
