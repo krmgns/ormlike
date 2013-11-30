@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright 2013, Kerem Gunes <http://qeremy.com/>.
  *
@@ -17,18 +16,17 @@
  */
 
 /**
- * @class ORMLikeException v0.1
- *
- * Throw an exception.
+ * @class ORMLikeSql v0.1
  */
-class ORMLikeException extends Exception
+class ORMLikeSql
 {
-    public function __construct() {
-        if (!LOCAL) die('');
-        $args = func_get_args();
-        $msg  = count($args) == 1
-            ? "\n ". $args[0] ."\n"
-            : "\n ". vsprintf(array_shift($args), $args) ."\n";
-        parent::__construct($msg);
+    protected $_sql;
+
+    public function __construct($sql = null) {
+        $this->_sql = trim($sql);
+    }
+
+    public function toString() {
+        return $this->_sql;
     }
 }

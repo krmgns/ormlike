@@ -26,9 +26,9 @@ abstract class ORMLikeDatabaseAbstract
     protected
         // Connection options
         $_cfg = array(
-            'user' => 'root',      'pass'      => '11111111',
-            'host' => 'localhost', 'database'  => 'test',
-            'charset' => 'utf8',   'time_zone' => '+00:00',
+            'user'    => DB_USER,    'pass'      => DB_PASS,
+            'host'    => DB_HOST,    'database'  => DB_NAME,
+            'charset' => DB_CHARSET, 'time_zone' => DB_TIMEZONE,
         ),
         // The properties of the CRUD operations
         $_props = array('insertId' => 0, 'affectedRows' => 0, 'numRows' => 0),
@@ -41,17 +41,17 @@ abstract class ORMLikeDatabaseAbstract
         $_timerStop         = 0,  // Last query time stop
         $_timerProcess      = 0,  // Last query time process
         $_timerProcessTotal = 0;  // Total query time processes
-    
+
     // Result-set of last query for select command
     public $data = array();
-    
+
     // Initialize a ORMLikeDatabaseAbstract object open connection.
     public function __construct() { $this->connect(); }
     // De-initialize a ORMLikeDatabaseAbstract object and close connection.
     public function __destruct()  { $this->disconnect(); }
     // Return last query as string
     public function __toString()  { return $this->_query; }
-    
+
     /**
      * Access to ORMLikeDatabaseAbstract vars.
      *
@@ -73,7 +73,7 @@ abstract class ORMLikeDatabaseAbstract
         // No property
         throw new ORMLikeException('Undefined property : %s.', $var);
     }
-    
+
     /**
      * Open a database connection, set charset and timezone.
      *
@@ -99,7 +99,7 @@ abstract class ORMLikeDatabaseAbstract
         }
         return $this->_link;
     }
-    
+
     /**
      * Close the existing database connection, set self::$_link NULL.
      */
@@ -109,7 +109,7 @@ abstract class ORMLikeDatabaseAbstract
             $this->_link = null;
         }
     }
-    
+
     /**
      * Reset self::$data, self::$_query and self::$_props.
      */
@@ -120,7 +120,7 @@ abstract class ORMLikeDatabaseAbstract
             $this->_props[$key] = 0;
         }
     }
-    
+
     /**
      * Free self::$_result and set NULL.
      */
@@ -130,13 +130,13 @@ abstract class ORMLikeDatabaseAbstract
             $this->_result = null;
         }
     }
-    
+
     /**
      * Prepare SQL strings.
      *
-     * Note: Since MySQLI gives error for non-completed strings (e.g: WHERE id=?), 
+     * Note: Since MySQLI gives error for non-completed strings (e.g: WHERE id=?),
      * I prefer to use this instead. It is able to secure any input as well.
-     * 
+     *
      * @param String $sql (required)
      * @param Array $params (required)
      * @return String $sql
@@ -147,11 +147,11 @@ abstract class ORMLikeDatabaseAbstract
         if (!is_array($params)) {
             $params = array($params);
         }
-        
+
         preg_match_all('~%[sdfF]|\?|:[a-zA-Z0-9_]+~', $sql, $match);
         if (isset($match[0])) {
             if (count($match[0]) != count($params)) {
-                throw new ORMLikeException('No enough params for %s->prepare.', get_class($this));
+                throw new ORMLikeException('No enough params for %s->prepare().', get_class($this));
             }
             $i = 0; // Indexes could be string, e.g: array(':id' => 1, ...)
             foreach ($params as $key => $val) {
@@ -162,13 +162,13 @@ abstract class ORMLikeDatabaseAbstract
                 }
             }
         }
-        
+
         return $sql;
     }
-    
+
     /**
      * Escape (secure) SQL inputs by types.
-     * 
+     *
      * @param Mixed $input (required)
      * @param String $type
      * @return String $input
@@ -180,7 +180,11 @@ abstract class ORMLikeDatabaseAbstract
                 return sprintf($type, $input);
             }
         }
-        
+
+        if ($input instanceof ORMLikeSql) {
+            return $input->toString();
+        }
+
         switch (gettype($input)) {
             case 'NULL':
                 return 'NULL';
@@ -197,13 +201,13 @@ abstract class ORMLikeDatabaseAbstract
                 // I trust you baby...
                 return "'". mysqli_real_escape_string($this->_link, $input) ."'";
         }
-        
+
         return $input;
     }
-    
+
     /**
      * Escape identifiers for MySQL.
-     * 
+     *
      * @param String|Array $input (required)
      * @return String $input
      */
@@ -213,10 +217,10 @@ abstract class ORMLikeDatabaseAbstract
         }
         return '`'. trim($input) .'`';
     }
-    
+
     /**
      * Prepare where statement.
-     * 
+     *
      * @param String $where (required)
      * @param Array $params
      * @return String $where
@@ -227,7 +231,7 @@ abstract class ORMLikeDatabaseAbstract
         }
         return $where;
     }
-    
+
     /**
      * Abstract methods for ORMLikeDatabase.
      */
@@ -237,4 +241,8 @@ abstract class ORMLikeDatabaseAbstract
     abstract public function insert($table, Array $data = array());
     abstract public function update($table, Array $data = array(), $where = '1=1', $params = array());
     abstract public function delete($table, $where = '1=1', $params = array());
+
+    public function sql($sql) {
+        return new ORMLikeSql($sql);
+    }
 }

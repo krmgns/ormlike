@@ -28,10 +28,10 @@ class ORMLikeDatabase extends ORMLikeDatabaseAbstract
           FETCH_ASSOC  = 2,
           FETCH_ARRAY  = 3,
           FETCH_CLASS  = 4; // @todo
-    
+
     // ORMLikeDatabase intance for singleton
     private static $_instance = null;
-    
+
     /**
      * Initialize a ORMLikeDatabase object.
      *
@@ -43,7 +43,7 @@ class ORMLikeDatabase extends ORMLikeDatabaseAbstract
         }
         return self::$_instance;
     }
-    
+
     /**
      * Execute SQL queries.
      *
@@ -54,37 +54,44 @@ class ORMLikeDatabase extends ORMLikeDatabaseAbstract
     public function query($query, $params = array()) {
         // Reset query & data & props
         $this->reset();
-        
+
         // Count queries
         ++$this->_queryCount;
-        
+
         // Check query
         $this->_query = trim($query);
         if ('' === $this->_query) {
             throw new ORMLikeException('Query cannot be empty.');
         }
-        
+
         // Prepare query
         if (!empty($params)) {
             $this->_query = $this->prepare($query, $params);
         }
-        
+        // pre($this->_query);
+
         // Start time process
         $this->_timerStart = microtime(true);
-        
+
         if (!$this->_result = mysqli_query($this->_link, $this->_query)) {
             throw new ORMLikeException(
                 'Query error: query[%s], error[%s]', $this->_query, mysqli_error($this->_link));
         }
-        
+
+        // Store props
+        if (preg_match('~^(?:insert|update|delete|replace)\s+~i', $this->_query)) {
+            $this->_props['insertId'] = $this->_link->insert_id;
+            $this->_props['affectedRows'] = $this->_link->affected_rows;
+        }
+
         // Stop time process
         $this->_timerStop          = microtime(true);
         $this->_timerProcess       = number_format(floatval($this->_timerStop - $this->_timerStart), 4);
         $this->_timerProcessTotal += $this->_timerProcess;
-        
+
         return $this->_result;
     }
-    
+
     /**
      * Fetch a row-set, set self::$_props[numRows].
      *
@@ -108,10 +115,10 @@ class ORMLikeDatabase extends ORMLikeDatabaseAbstract
         $this->_props['numRows'] = $i;
         // Clear result
         $this->freeResult();
-        
+
         return isset($this->data[0]) ? $this->data[0] : null;
     }
-    
+
     /**
      * Fetch row-sets, set self::$_props[numRows].
      *
@@ -134,10 +141,10 @@ class ORMLikeDatabase extends ORMLikeDatabaseAbstract
         $this->_props['numRows'] = $i;
         // Clear result
         $this->freeResult();
-        
+
         return $this->data;
     }
-    
+
     /**
      * Insert a row-set, set self::$_props[insertId].
      *
@@ -150,15 +157,17 @@ class ORMLikeDatabase extends ORMLikeDatabaseAbstract
         $vals = $this->escape(array_values($data));
         $this->query(sprintf(
             'INSERT INTO %s (%s) VALUES (%s)',
-                $this->escapeIdentifier($table), join(', ', $keys), $vals
+                $this->escapeIdentifier($table),
+                join(', ', $keys),
+                $vals
         ));
-        
+
         // Set insert id
         $this->_props['insertId'] = $this->_link->insert_id;
         // Return insert id
         return $this->_link->insert_id;
     }
-    
+
     /**
      * Update a row-set, set self::$_props[affectedRows].
      *
@@ -168,24 +177,26 @@ class ORMLikeDatabase extends ORMLikeDatabaseAbstract
      * @param Array $params
      * @return Integer self::_link->affected_rows
      */
-    public function update($table, Array $data = array(), $where = '1=1', $params = array()) {
+    public function update($table, Array $data = array(), $where = '1=1', $params = array(), $limit = null) {
         $set = array();
         foreach ($data as $key => $val) {
             $set[] = $this->escapeIdentifier($key) .' = '. $this->escape($val);
         }
-        
+
         $this->query(sprintf(
-            'UPDATE %s SET %s WHERE %s',
-                $this->escapeIdentifier($table), join(', ', $set), 
-                $this->_where($where, $params)
+            'UPDATE %s SET %s WHERE %s %s',
+                $this->escapeIdentifier($table),
+                join(', ', $set),
+                $this->_where($where, $params),
+                $limit ? ('LIMIT '. $limit) : ''
         ));
-        
+
         // Set affected rows
         $this->_props['affectedRows'] = $this->_link->affected_rows;
         // Return affected rows
         return $this->_link->affected_rows;
     }
-    
+
     /**
      * Delete a row-set, set self::$_props[affectedRows].
      *
@@ -194,19 +205,20 @@ class ORMLikeDatabase extends ORMLikeDatabaseAbstract
      * @param Array $params
      * @return Integer self::_link->affected_rows
      */
-    public function delete($table, $where = '1=1', $params = array()) {
+    public function delete($table, $where = '1=1', $params = array(), $limit = null) {
         $this->query(sprintf(
-            'DELETE FROM %s WHERE %s',
-                $this->escapeIdentifier($table), 
-                $this->_where($where, $params)
+            'DELETE FROM %s WHERE %s %s',
+                $this->escapeIdentifier($table),
+                $this->_where($where, $params),
+                $limit ? ('LIMIT '. $limit) : ''
         ));
-        
+
         // Set affected rows
         $this->_props['affectedRows'] = $this->_link->affected_rows;
         // Return affected rows
         return $this->_link->affected_rows;
     }
-    
+
     /**
      * Determine a fetch method for MySQLIResult object.
      *
