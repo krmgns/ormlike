@@ -24,7 +24,6 @@
 class ORMLikeException extends Exception
 {
     public function __construct() {
-        if (!LOCAL) die('');
         $args = func_get_args();
         $msg  = count($args) == 1
             ? "\n ". $args[0] ."\n"
