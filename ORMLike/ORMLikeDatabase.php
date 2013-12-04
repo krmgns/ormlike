@@ -17,7 +17,7 @@
  */
 
 /**
- * @class ORMLikeDatabase v0.3
+ * @class ORMLikeDatabase v0.2
  *
  * Database Adapter for MySQLI.
  */
