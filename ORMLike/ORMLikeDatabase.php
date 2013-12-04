@@ -17,7 +17,7 @@
  */
 
 /**
- * @class ORMLikeDatabase v0.1
+ * @class ORMLikeDatabase v0.3
  *
  * Database Adapter for MySQLI.
  */
@@ -51,7 +51,7 @@ class ORMLikeDatabase extends ORMLikeDatabaseAbstract
      * @param Array $params
      * @return Mixed MySQLIResult object
      */
-    public function query($query, $params = array()) {
+    public function query($query, $params = null) {
         // Reset query & data & props
         $this->reset();
 
@@ -65,10 +65,10 @@ class ORMLikeDatabase extends ORMLikeDatabaseAbstract
         }
 
         // Prepare query
-        if (!empty($params)) {
+        if (null !== $params) {
             $this->_query = $this->prepare($query, $params);
         }
-        // pre($this->_query);
+        pre($this->_query);
 
         // Start time process
         $this->_timerStart = microtime(true);
@@ -101,7 +101,7 @@ class ORMLikeDatabase extends ORMLikeDatabaseAbstract
      * @param Integer $fetchClass (not-implemented)
      * @return Array|NULL
      */
-    public function get($query, $params = array(), $fetchType = self::FETCH_OBJECT, $fetchClass = null) {
+    public function get($query, $params = null, $fetchType = self::FETCH_OBJECT, $fetchClass = null) {
         $this->query($query, $params);
         $i = 0;
         if (null !== $this->_result || 0 != $this->_result->num_rows) {
@@ -128,7 +128,7 @@ class ORMLikeDatabase extends ORMLikeDatabaseAbstract
      * @param Integer $fetchClass (not-implemented)
      * @return Array
      */
-    public function getAll($query, $params = array(), $fetchType = self::FETCH_OBJECT, $fetchClass = null) {
+    public function getAll($query, $params = null, $fetchType = self::FETCH_OBJECT, $fetchClass = null) {
         $this->query($query, $params);
         $i = 0;
         if (null !== $this->_result || 0 !== $this->_result->num_rows) {
@@ -177,7 +177,7 @@ class ORMLikeDatabase extends ORMLikeDatabaseAbstract
      * @param Array $params
      * @return Integer self::_link->affected_rows
      */
-    public function update($table, Array $data = array(), $where = '1=1', $params = array(), $limit = null) {
+    public function update($table, Array $data = array(), $where = '1=1', $params = null, $limit = null) {
         $set = array();
         foreach ($data as $key => $val) {
             $set[] = $this->escapeIdentifier($key) .' = '. $this->escape($val);
@@ -205,7 +205,7 @@ class ORMLikeDatabase extends ORMLikeDatabaseAbstract
      * @param Array $params
      * @return Integer self::_link->affected_rows
      */
-    public function delete($table, $where = '1=1', $params = array(), $limit = null) {
+    public function delete($table, $where = '1=1', $params = null, $limit = null) {
         $this->query(sprintf(
             'DELETE FROM %s WHERE %s %s',
                 $this->escapeIdentifier($table),
