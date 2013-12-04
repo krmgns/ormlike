@@ -68,7 +68,7 @@ class ORMLikeDatabase extends ORMLikeDatabaseAbstract
         if (null !== $params) {
             $this->_query = $this->prepare($query, $params);
         }
-        pre($this->_query);
+        // pre($this->_query);
 
         // Start time process
         $this->_timerStart = microtime(true);
