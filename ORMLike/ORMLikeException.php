@@ -25,9 +25,9 @@ class ORMLikeException extends Exception
 {
     public function __construct() {
         $args = func_get_args();
-        $msg  = count($args) == 1
+        $mesg = count($args) == 1
             ? "\n ". $args[0] ."\n"
             : "\n ". vsprintf(array_shift($args), $args) ."\n";
-        parent::__construct($msg);
+        parent::__construct($mesg);
     }
 }
