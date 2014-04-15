@@ -17,7 +17,7 @@
  */
 
 /**
- * @class ORMLikeDatabaseAbstract v0.1
+ * @class ORMLikeDatabaseAbstract v0.2
  *
  * Abstraction for ORMLikeDatabase object.
  */
@@ -104,7 +104,7 @@ abstract class ORMLikeDatabaseAbstract
      * Close the existing database connection, set self::$_link NULL.
      */
     public function disconnect() {
-        if (null !== $this->_link) {
+        if ($this->_link instanceof mysqli) {
             mysqli_close($this->_link);
             $this->_link = null;
         }
@@ -125,7 +125,7 @@ abstract class ORMLikeDatabaseAbstract
      * Free self::$_result and set NULL.
      */
     public function freeResult() {
-        if (null !== $this->_result) {
+        if ($this->_result instanceof mysqli_result) {
             mysqli_free_result($this->_result);
             $this->_result = null;
         }

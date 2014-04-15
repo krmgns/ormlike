@@ -17,7 +17,7 @@
  */
 
 /**
- * @class ORMLikeDatabase v0.2
+ * @class ORMLikeDatabase v0.3
  *
  * Database Adapter for MySQLI.
  */
@@ -73,7 +73,7 @@ class ORMLikeDatabase extends ORMLikeDatabaseAbstract
         // Start time process
         $this->_timerStart = microtime(true);
 
-        if (!$this->_result = mysqli_query($this->_link, $this->_query)) {
+        if (!$this->_result =@ mysqli_query($this->_link, $this->_query)) {
             throw new ORMLikeException(
                 'Query error: query[%s], error[%s]', $this->_query, mysqli_error($this->_link));
         }
