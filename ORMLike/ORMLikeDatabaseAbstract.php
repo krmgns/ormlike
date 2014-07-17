@@ -17,7 +17,7 @@
  */
 
 /**
- * @class ORMLikeDatabaseAbstract v0.2
+ * @class ORMLikeDatabaseAbstract v0.3
  *
  * Abstraction for ORMLikeDatabase object.
  */
@@ -148,17 +148,19 @@ abstract class ORMLikeDatabaseAbstract
             $params = array($params);
         }
 
-        preg_match_all('~%[sdfF]|\?|:[a-zA-Z0-9_]+~', $sql, $match);
-        if (isset($match[0])) {
-            if (count($match[0]) != count($params)) {
-                throw new ORMLikeException('No enough params for %s->prepare().', get_class($this));
-            }
-            $i = 0; // Indexes could be string, e.g: array(':id' => 1, ...)
-            foreach ($params as $key => $val) {
-                $key = $match[0][$i++];
-                $val = $this->escape($val, $key);
-                if (false !== ($pos = strpos($sql, $key))) {
-                    $sql = substr_replace($sql, $val, $pos, strlen($key));
+        if (!empty($params)) {
+            preg_match_all('~%[sdfF]|\?|:[a-zA-Z0-9_]+~', $sql, $match);
+            if (isset($match[0])) {
+                if (count($match[0]) != count($params)) {
+                    throw new ORMLikeException('No enough params for %s->prepare().', get_class($this));
+                }
+                $i = 0; // Indexes could be string, e.g: array(':id' => 1, ...)
+                foreach ($params as $key => $val) {
+                    $key = $match[0][$i++];
+                    $val = $this->escape($val, $key);
+                    if (false !== ($pos = strpos($sql, $key))) {
+                        $sql = substr_replace($sql, $val, $pos, strlen($key));
+                    }
                 }
             }
         }
