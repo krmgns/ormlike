@@ -2,8 +2,18 @@ Actually, I'm just trying to practice on the ORM concept. But it works, trust me
 
 **USAGE**
 
-1- Set your database connection infos here: `ORMLikeDatabaseAbstract::$_cfg`.<br>
-2- Be sure that PHP version >= 5.3
+// Requires PHP version >= 5.3
+
+```php
+// Set database config that used in ORMLikeDatabaseAbstract
+
+define('ORMLIKE_DATABASE_HOST', 'localhost');
+define('ORMLIKE_DATABASE_NAME', 'test');
+define('ORMLIKE_DATABASE_USER', 'user');
+define('ORMLIKE_DATABASE_PASS', '****');
+define('ORMLIKE_DATABASE_CHARSET', 'utf8');
+define('ORMLIKE_DATABASE_TIMEZONE', '+00:00');
+```
 
 - Simple
 
@@ -62,7 +72,7 @@ $booksObject->remove(array(1,2,3));
 class Books extends ORMLike {
     protected $_table = 'books';
     protected $_primaryKey = 'id';
-    
+
     public $id;
     public $title;
     public $price;
@@ -102,7 +112,7 @@ print $booksObject->get('price'); // 14.55
 class Books extends ORMLike {
     protected $_table = 'books';
     protected $_primaryKey = 'id';
-    
+
     // Assuming the field name is "last_update_date_unix_timestamp"
     public function setLastUpdateUTS($ts) {
         $this->last_update_date_unix_timestamp = $ts;

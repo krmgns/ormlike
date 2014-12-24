@@ -26,9 +26,9 @@ abstract class ORMLikeDatabaseAbstract
     protected
         // Connection options
         $_cfg = array(
-            'user'    => DB_USER,    'pass'      => DB_PASS,
-            'host'    => DB_HOST,    'database'  => DB_NAME,
-            'charset' => DB_CHARSET, 'time_zone' => DB_TIMEZONE,
+            'user'    => ORMLIKE_DATABASE_USER,    'pass'      => ORMLIKE_DATABASE_PASS,
+            'host'    => ORMLIKE_DATABASE_HOST,    'database'  => ORMLIKE_DATABASE_NAME,
+            'charset' => ORMLIKE_DATABASE_CHARSET, 'time_zone' => ORMLIKE_DATABASE_TIMEZONE,
         ),
         // The properties of the CRUD operations
         $_props = array('insertId' => 0, 'affectedRows' => 0, 'numRows' => 0),
