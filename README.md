@@ -6,7 +6,6 @@ Actually, I'm just trying to practice on the ORM concept. But it works, trust me
 
 ```php
 // Set database config that used in ORMLikeDatabaseAbstract
-
 define('ORMLIKE_DATABASE_HOST', 'localhost');
 define('ORMLIKE_DATABASE_NAME', 'test');
 define('ORMLIKE_DATABASE_USER', 'user');
