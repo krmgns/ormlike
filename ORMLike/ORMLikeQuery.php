@@ -311,7 +311,7 @@ class ORMLikeQuery
     }
 
     /**
-     * Proxy method for parent.query() to query execution
+     * Proxy method for db.query() to query execution
      *
      * @param  \Closure|null $callback
      * @return MySQLi Result Object
@@ -326,7 +326,7 @@ class ORMLikeQuery
     }
 
     /**
-     * Proxy method for parent.get()
+     * Proxy method for db.get()
      *
      * @param  \Closure|null $callback
      * @return mixed|null
@@ -340,7 +340,7 @@ class ORMLikeQuery
     }
 
     /**
-     * Proxy method for parent.getAll()
+     * Proxy method for db.getAll()
      *
      * @param  \Closure|null $callback
      * @return array
