@@ -40,7 +40,8 @@ class ORMLikeQuery
 
 
     /**
-     * Initialize an ORMLikeQuery object and ORMLikeDatabase object.
+     * Initialize an ORMLikeQuery object
+     * Initialize an ORMLikeDatabase object
      */
     public function __construct($table) {
         // Need a table first
@@ -122,7 +123,9 @@ class ORMLikeQuery
     }
 
     /**
-     * Reset query / query string, useful when new query need
+     * Reset query / query string
+     *
+     * Useful when new query need
      *
      * @return self._push()
      */
@@ -195,12 +198,15 @@ class ORMLikeQuery
     }
 
     /**
-     * Push `where` statement (it will escape all string, use where if you dont wanna this happens)
+     * Push `where` statement
+     *
+     * That will escape all string, use
+     * `where` if you dont wanna this happens
      *
      * @param  string $query
      * @param  array  $params
      * @param  string $op
-     * @return self.where
+     * @return self.where()
      */
     public function whereLike($query, $params = array(), $op = self::OP_AND) {
         $params = (array) $params;
@@ -226,6 +232,7 @@ class ORMLikeQuery
 
     /**
      * Push `where` statement with `is null`
+     *
      * @param  string $field
      * @return self._push()
      */
@@ -235,6 +242,7 @@ class ORMLikeQuery
 
     /**
      * Push `where` statement with `is not null`
+     *
      * @param  string $field
      * @return self._push()
      */
@@ -244,6 +252,7 @@ class ORMLikeQuery
 
     /**
      * Push `having` statement
+     *
      * @param  string $query
      * @param  array  $params
      * @return self._push()
