@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright 2013, Kerem Gunes <http://qeremy.com/>.
  *
@@ -17,7 +16,7 @@
  */
 
 /**
- * @class ORMLikeEntity v0.1
+ * @class ORMLikeEntity
  *
  * Create an entity.
  */
@@ -25,7 +24,7 @@ class ORMLikeEntity
 {
     // Row-set
     private $_data = array();
-    
+
     /**
      * Initialize an ORMLike object and ORMLikeDatabase object.
      *
@@ -36,7 +35,7 @@ class ORMLikeEntity
             $this->_data[$key] = $val;
         }
     }
-    
+
     /**
      * Set data.
      *
@@ -46,7 +45,7 @@ class ORMLikeEntity
     public function __set($key, $val) {
         $this->_data[$key] = $val;
     }
-    
+
     /**
      * Get data.
      *
@@ -60,7 +59,7 @@ class ORMLikeEntity
         }
         throw new ORMLikeException('"%s" is not found for this entity!', $key);
     }
-    
+
     /**
      * Call a fake method for $_data data or defined method.
      *
@@ -73,7 +72,7 @@ class ORMLikeEntity
         if (method_exists($this, $call)) {
             return call_user_func_array(array($this, $call), $args);
         }
-        
+
         $act = substr($call, 0, 3);
         $var = lcfirst(substr($call, 3));
         // Get methods for properties
@@ -84,10 +83,10 @@ class ORMLikeEntity
         if ('set' === $act) {
             return $this->__set($var, $args[0]);
         }
-        
+
         throw new ORMLikeException('%s not callable!', $call);
     }
-    
+
     /**
      * Isset data.
      *
@@ -97,7 +96,7 @@ class ORMLikeEntity
     public function __isset($key) {
         return array_key_exists($key, $this->_data);
     }
-    
+
     /**
      * Unset data.
      *
@@ -106,7 +105,7 @@ class ORMLikeEntity
     public function __unset($key) {
         unset($this->_data[$key]);
     }
-    
+
     /**
      * Return self::$_data.
      *
@@ -115,7 +114,7 @@ class ORMLikeEntity
     public function toArray() {
         return $this->_data;
     }
-    
+
     /**
      * Is empty self::$_data or not.
      *

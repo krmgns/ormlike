@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright 2013, Kerem Gunes <http://qeremy.com/>.
  *
@@ -17,7 +16,7 @@
  */
 
 /**
- * @class ORMLikeHelper v0.1
+ * @class ORMLikeHelper
  *
  * Help for ORMLike. :)
  */

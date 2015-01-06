@@ -16,7 +16,7 @@
  */
 
 /**
- * @class ORMLikeSql v0.1
+ * @class ORMLikeSql
  */
 class ORMLikeSql
 {

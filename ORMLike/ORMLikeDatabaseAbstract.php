@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright 2013, Kerem Gunes <http://qeremy.com/>.
  *
@@ -17,7 +16,7 @@
  */
 
 /**
- * @class ORMLikeDatabaseAbstract v0.3
+ * @class ORMLikeDatabaseAbstract
  *
  * Abstraction for ORMLikeDatabase object.
  */

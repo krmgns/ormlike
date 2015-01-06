@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright 2013, Kerem Gunes <http://qeremy.com/>.
  *
@@ -17,7 +16,7 @@
  */
 
 /**
- * @class ORMLike v0.1
+ * @class ORMLike
  *
  * Built an ORMLike object.
  */
@@ -32,7 +31,7 @@ class ORMLike implements Countable, IteratorAggregate
         $_primaryKey,
         // Entity object
         $_entity = null;
-    
+
     /**
      * Initialize an ORMLike object and ORMLikeDatabase object.
      */
@@ -51,7 +50,7 @@ class ORMLike implements Countable, IteratorAggregate
             $this->_checkEntity($props);
         }
     }
-    
+
     /**
      * Set entity property.
      *
@@ -62,7 +61,7 @@ class ORMLike implements Countable, IteratorAggregate
         $this->_checkEntity();
         $this->_entity->__set($key, $val);
     }
-    
+
     /**
      * Get entity property.
      *
@@ -72,7 +71,7 @@ class ORMLike implements Countable, IteratorAggregate
         $this->_checkEntity();
         return $this->_entity->__get($key);
     }
-    
+
     /**
      * Set entity property.
      *
@@ -82,7 +81,7 @@ class ORMLike implements Countable, IteratorAggregate
     public function set($key, $val) {
         return $this->__set($key, $val);
     }
-    
+
     /**
      * Get entity property.
      *
@@ -91,7 +90,7 @@ class ORMLike implements Countable, IteratorAggregate
     public function get($key) {
         return $this->__get($key);
     }
-    
+
     /**
      * Call a fake method of entity for a property (if entity property is exists).
      * Call a real method of entity (if method is exists).
@@ -107,7 +106,7 @@ class ORMLike implements Countable, IteratorAggregate
         $this->_checkEntity();
         return $this->_entity->__call($call, $args);
     }
-    
+
     /**
      * Fetch a row-set, create entity object.
      *
@@ -124,7 +123,7 @@ class ORMLike implements Countable, IteratorAggregate
         }
         return $this;
     }
-    
+
     /**
      * Fetch row-sets, create entity objects.
      *
@@ -150,7 +149,7 @@ class ORMLike implements Countable, IteratorAggregate
         }
         return $this;
     }
-    
+
     /**
      * Insert or update a row-set.
      * Note: Entity object must be inited before.
@@ -182,7 +181,7 @@ class ORMLike implements Countable, IteratorAggregate
         }
         return $result;
     }
-    
+
     /**
      * Delete a row-set.
      *
@@ -199,7 +198,7 @@ class ORMLike implements Countable, IteratorAggregate
         }
         throw new ORMLikeException('There is no criteria ehough for delete!');
     }
-    
+
     /**
      * Return self::$_entity as array.
      *
@@ -215,7 +214,7 @@ class ORMLike implements Countable, IteratorAggregate
         }
         return $array;
     }
-    
+
     /**
      * Countable method.
      *
@@ -227,7 +226,7 @@ class ORMLike implements Countable, IteratorAggregate
         }
         return count($this->_entity);
     }
-    
+
     /**
      * IteratorAggregate method.
      *
@@ -239,7 +238,7 @@ class ORMLike implements Countable, IteratorAggregate
         }
         return new ArrayIterator($this->_entity);
     }
-    
+
     /**
      * Check whether entity object is already created or not and if not create new one.
      */
@@ -248,7 +247,7 @@ class ORMLike implements Countable, IteratorAggregate
             $this->_entity = $this->_createEntity($data);
         }
     }
-    
+
     /**
      * Create a new entity object.
      *
