@@ -24,7 +24,7 @@ function prr() {
 /******************************************/
 
 define('ORMLIKE_DATABASE_USER', 'root');
-define('ORMLIKE_DATABASE_PASS', '11111111');
+define('ORMLIKE_DATABASE_PASS', '****');
 define('ORMLIKE_DATABASE_HOST', 'localhost');
 define('ORMLIKE_DATABASE_NAME', 'test');
 define('ORMLIKE_DATABASE_CHARSET', 'utf8');
