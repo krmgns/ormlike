@@ -156,7 +156,6 @@ class ORMLike implements Countable, IteratorAggregate
 
         // Reset data
         $this->_entity = array();
-        // $this->_db->getAll("SELECT * FROM `{$this->_table}` $where");
         $this->_db->getAll($query);
         if ($this->_db->numRows) {
             foreach ($this->_db->data as $data) {
