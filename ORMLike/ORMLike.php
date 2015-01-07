@@ -133,7 +133,7 @@ class ORMLike implements Countable, IteratorAggregate
      */
     public function findAll($where = '', $params = array()) {
         if ($where) {
-            $where = preg_replace('~^WHERE \s*~i', '', $where);
+            $where = preg_replace('~^WHERE \s*~i', '', trim($where));
             if (!empty($params)) {
                 if (is_array($params)) {
                     $params = array($params);
