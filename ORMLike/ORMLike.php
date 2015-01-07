@@ -114,9 +114,17 @@ class ORMLike implements Countable, IteratorAggregate
      * @return Object self
      */
     public function find($params = array()) {
+        // Check for relations
+        if (isset($this->_relations)) {
+            $where = $this->_db->prepare(" WHERE `{$this->_table}`.`{$this->_primaryKey}` = ?", $params);
+            $query = $this->_generateRelationQuery('select', $where);
+        } else {
+            $query = $this->_db->prepare("SELECT * FROM `{$this->_table}` WHERE `{$this->_primaryKey}` = ?", $params);
+        }
+
         // Reset data
         $this->_entity = array();
-        $this->_db->get("SELECT * FROM `{$this->_table}` WHERE `{$this->_primaryKey}` = ?", $params);
+        $this->_db->get($query);
         if ($this->_db->numRows) {
             $this->_entity = $this->_createEntity($this->_db->data[0]);
             $this->_db->reset();
@@ -142,9 +150,14 @@ class ORMLike implements Countable, IteratorAggregate
             }
             $where = 'WHERE '. $where;
         }
+        $query = isset($this->_relations)
+            ? $this->_generateRelationQuery('select', $where)
+            : "SELECT * FROM `{$this->_table}` $where";
+
         // Reset data
         $this->_entity = array();
-        $this->_db->getAll("SELECT * FROM `{$this->_table}` $where");
+        // $this->_db->getAll("SELECT * FROM `{$this->_table}` $where");
+        $this->_db->getAll($query);
         if ($this->_db->numRows) {
             foreach ($this->_db->data as $data) {
                 $this->_entity[] = $this->_createEntity($data);
@@ -260,5 +273,73 @@ class ORMLike implements Countable, IteratorAggregate
      */
     protected function _createEntity($data = array()) {
         return new ORMLikeEntity((array) $data);
+    }
+
+    /**
+     * Generate a sql query (just left joins only for now)
+     *
+     * @param  string $for
+     * @param  string $where
+     * @return string
+     */
+    protected function _generateRelationQuery($for, $where) {
+        // Make select query
+        if ($for == 'select') {
+            $query = sprintf('SELECT `%s`.* FROM `%s`', $this->_table, $this->_table);
+            // Check for left join rule
+            if (isset($this->_relations['select']['leftJoin'])) {
+                foreach ($this->_relations['select']['leftJoin'] as $leftJoin) {
+                    $query .= sprintf(' LEFT JOIN `%s` ON `%s`.`%s` = `%s`.`%s`',
+                        $leftJoin['table'], $leftJoin['table'], $leftJoin['foreignKey'],
+                        $this->_table, $this->_primaryKey
+                    );
+                    if (isset($leftJoin['field'])) {
+                        // Check for field prefix
+                        $fieldPrefix = isset($leftJoin['fieldPrefix']) ? $leftJoin['fieldPrefix'] : '';
+                        // Split prefix if more than one detecting by comma
+                        $field = preg_split('~\s*,\s*~', $leftJoin['field'], -1, PREG_SPLIT_NO_EMPTY);
+                        if (!empty($field)) {
+                            $field = array_map(function($field) use ($fieldPrefix, $leftJoin) {
+                                // Notice user
+                                if ($field == '*') {
+                                    trigger_error(
+                                        '* wildcard causes MySQL ambiguous error on joins, specify each field instead.');
+                                }
+
+                                // Check for aggregate functions
+                                if (preg_match('~(\w+).*\((.+?)\)~', $field, $match)) {
+                                    $field = sprintf('%s(`%s`.%s) AS %s%s',
+                                        $match[1], $leftJoin['table'], $match[2], $fieldPrefix, trim($match[2]));
+                                } else {
+                                    // Prevent * AS *
+                                    $field = ($field == '*')
+                                        ? sprintf('`%s`.%s', $leftJoin['table'], $field)
+                                        : sprintf('`%s`.%s AS %s%s', $leftJoin['table'], $field, $fieldPrefix, $field);
+                                }
+
+                                return $field;
+                            }, $field);
+
+                            $field = join(', ', $field);
+                            // Add field
+                            $query = preg_replace_callback('~\s+FROM~', function($m) use ($field) {
+                                return ', '. trim($field, ', ') .' FROM';
+                            }, $query);
+                        }
+                    }
+                    // Add where into
+                    $query .= $where;
+                    // Add group by
+                    if (isset($leftJoin['groupBy'])) {
+                        $query .= sprintf(' GROUP BY %s', $leftJoin['groupBy']);
+                    }
+                }
+            } else {
+                // Add just where
+                $query .= $where;
+            }
+
+            return $query;
+        }
     }
 }
