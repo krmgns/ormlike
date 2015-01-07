@@ -1,7 +1,7 @@
 {
     "name": "qeremy/ormlike",
     "type": "library",
-    "version": "v0.1",
+    "version": "0.4",
     "homepage": "http://github.com/qeremy/ORMLike",
     "description": "Simple ORM implementation with PHP.",
     "keywords": ["orm", "php"],
