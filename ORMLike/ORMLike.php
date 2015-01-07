@@ -95,16 +95,16 @@ class ORMLike implements Countable, IteratorAggregate
      * Call a fake method of entity for a property (if entity property is exists).
      * Call a real method of entity (if method is exists).
      *
-     * @param String $call (required)
+     * @param String $name
      * @param String $args
      */
-    public function __call($call, $args = array()) {
+    public function __call($name, $args) {
         // Self defined method
-        if (method_exists($this, $call)) {
-            return call_user_func_array(array($this, $call), $args);
+        if (!method_exists($this, $name)) {
+            $this->_checkEntity();
+            return $this->_entity->__call($name, $args);
         }
-        $this->_checkEntity();
-        return $this->_entity->__call($call, $args);
+        throw new ORMLikeException('Method does not exists!');
     }
 
     /**
