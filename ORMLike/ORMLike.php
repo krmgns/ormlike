@@ -132,11 +132,15 @@ class ORMLike implements Countable, IteratorAggregate
      * @return Object self
      */
     public function findAll($where = '', $params = array()) {
-        if ($where && !empty($params)) {
-            if (is_array($params)) {
-                $params = array($params);
+        if ($where) {
+            $where = preg_replace('~^WHERE \s*~i', '', $where);
+            if (!empty($params)) {
+                if (is_array($params)) {
+                    $params = array($params);
+                }
+                $where = $this->_db->prepare($where, $params);
             }
-            $where = 'WHERE '. $this->_db->prepare($where, $params);
+            $where = 'WHERE '. $where;
         }
         // Reset data
         $this->_entity = array();
