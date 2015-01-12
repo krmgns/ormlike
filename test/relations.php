@@ -28,7 +28,7 @@ $users = new Users();
 
 // $user = $users->find(1);
 $user = $users->findAll();
-pre($user->toArray());
+// pre($user->toArray());
 
 pre('...');
 pre($users);

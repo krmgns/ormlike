@@ -329,6 +329,7 @@ class ORMLike implements Countable, IteratorAggregate
                 }
                 // Add where into
                 $query .= $where;
+
                 // Add group by
                 if (isset($leftJoin['groupBy'])) {
                     $query .= sprintf(' GROUP BY %s', $leftJoin['groupBy']);
