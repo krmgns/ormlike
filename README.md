@@ -105,7 +105,7 @@ print $booksObject->get('title'); // PHP in Action
 print $booksObject->get('price'); // 14.55
 ```
 
-- Set/Get fantastic field names (just a suggestion)
+- Set/Get fantastic field names or change data display
 
 ```php
 class Books extends ORMLike {
@@ -119,15 +119,24 @@ class Books extends ORMLike {
     public function getLastUpdateUTS() {
         return $this->last_update_date_unix_timestamp;
     }
+
+    // Print book title in anchor
+    public function getPageLink() {
+        return sprintf('<a href="book.php?id=%d">%s</a>', $this->id, $this->title);
+    }
 }
 
 $booksObject = new Books();
+
 // You can prefer this way
 $booksObject->setLastUpdateUTS(time());
 print $booksObject->getLastUpdateUTS();
 // This also works, your choice
 $booksObject->last_update_date_unix_timestamp = time();
 print $booksObject->last_update_date_unix_timestamp;
+
+// Print book link
+print $book->getPageLink();
 ```
 
 - Retrieve data with `findAll`
