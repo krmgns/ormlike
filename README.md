@@ -220,14 +220,14 @@ class Users extends ORMLike {
 
 $users = new Users();
 
-// Get all users with related tables data and see results
+// Get all users with related table(s) data and see results
 // print_r($users->findAll()->toArray());
 
-// Get user with related tables data
+// Get user with related table(s) data
 $user = $users->find(1);
 print $user->point;
 
-// Remove all users data from base table with related tables
+// Remove all users data from base table with related table(s) data
 $users->remove(4);
 $users->remove(array(4,5,6));
 ```
