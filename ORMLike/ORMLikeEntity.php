@@ -57,6 +57,11 @@ class ORMLikeEntity
         if (array_key_exists($key, $this->_data)) {
             return $this->_data[$key];
         }
+        // Check for camelCase'd keys
+        $keyus = ORMLikeHelper::camelcaseToUnderscore($key);
+        if (array_key_exists($keyus, $this->_data)) {
+            return $this->_data[$keyus];
+        }
         throw new ORMLikeException('"%s" is not found for this entity!', $key);
     }
 

@@ -22,9 +22,15 @@
  */
 class ORMLikeHelper
 {
-    public static function camelize($input) {
-        return preg_replace_callback('~_([a-z])~i', function($m) {
+    public static function underscoreToCamelcase($input) {
+        return preg_replace_callback('~_([A-Za-z])~', function($m) {
             return strtoupper($m[1]);
+        }, $input);
+    }
+
+    public static function camelcaseToUnderscore($input) {
+        return preg_replace_callback('~([A-Z])~', function($m) {
+            return '_'. strtolower($m[1]);
         }, $input);
     }
 }
