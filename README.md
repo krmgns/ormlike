@@ -221,7 +221,7 @@ class Users extends ORMLike {
 $users = new Users();
 
 // Get all users with related tables data and see results
-print_r($users->findAll()->toArray());
+// print_r($users->findAll()->toArray());
 
 // Get user with related tables data
 $user = $users->find(1);
