@@ -148,7 +148,7 @@ class ORMLike implements Countable, IteratorAggregate
                 }
                 $where = $this->_db->prepare($where, $params);
             }
-            $where = 'WHERE '. $where;
+            $where = ' WHERE '. $where;
         }
         $query = isset($this->_relations)
             ? $this->_generateRelationQuery('select', $where)
