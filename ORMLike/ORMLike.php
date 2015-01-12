@@ -194,16 +194,17 @@ class ORMLike implements Countable, IteratorAggregate
             }
         }
 
+        // Insert action
         if (!isset($data[$this->_primaryKey])) {
-            // Insert action
             if (empty($data)) {
                 throw new ORMLikeException('There is no data ehough on entity for insert!');
             }
             $result = $this->_db->insert($this->_table, $data);
             // Set ID
             $this->_entity->__set($this->_primaryKey, $result);
-        } else {
-            // Update action
+        }
+        // Update action
+        else {
             $id = $data[$this->_primaryKey];
             unset($data[$this->_primaryKey]);
             if (empty($data)) {
