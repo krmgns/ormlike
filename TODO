@@ -1,3 +1,4 @@
 - Make available to join tables (OK)
 - Needs a `query builder` that make the things more easy (OK)
-- Add filter option for find() and findAll() methods (used to filter result sets)
+- Add filter option for find() and findAll() methods (used to filter result sets, see Closures=null)
+- Add filter() method to filter object's entity

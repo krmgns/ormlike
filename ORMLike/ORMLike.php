@@ -113,7 +113,7 @@ class ORMLike implements Countable, IteratorAggregate
      * @param Array $params (required)
      * @return Object self
      */
-    public function find($params = array()) {
+    public function find($params = array(), Closure $filter = null) {
         // Check for relations
         if (isset($this->_relations)) {
             $where = $this->_db->prepare(" WHERE `{$this->_table}`.`{$this->_primaryKey}` = ?", $params);
@@ -139,7 +139,7 @@ class ORMLike implements Countable, IteratorAggregate
      * @param Array $params
      * @return Object self
      */
-    public function findAll($where = '', $params = array()) {
+    public function findAll($where = '', $params = array(), Closure $filter = null) {
         if ($where) {
             $where = preg_replace('~^WHERE \s*~i', '', trim($where));
             if (!empty($params)) {
@@ -165,6 +165,9 @@ class ORMLike implements Countable, IteratorAggregate
         }
         return $this;
     }
+
+    // @todo
+    public function filter(Closure $callback = null) {}
 
     /**
      * Insert or update a row-set.
