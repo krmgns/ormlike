@@ -178,6 +178,22 @@ class ORMLike implements Countable, IteratorAggregate
             throw new ORMLikeException('Entity is empty for now!');
         }
         $data = $this->_entity->toArray();
+        // Clear relations data / prevent columns not match error
+        if (isset($this->_relations['select']['leftJoin'])) {
+            foreach ($this->_relations['select']['leftJoin'] as $leftJoin) {
+                $field = preg_split('~\s*,\s*~', $leftJoin['field'], -1, PREG_SPLIT_NO_EMPTY);
+                $field = array_map(function($field){
+                    return preg_replace('~.+?\((.+?)\)~', '\\1', trim($field));
+                }, $field);
+                // pre($field);
+                foreach ($data as $key => $value) {
+                    if (in_array($key, $field)) {
+                        unset($data[$key]);
+                    }
+                }
+            }
+        }
+
         if (!isset($data[$this->_primaryKey])) {
             // Insert action
             if (empty($data)) {
