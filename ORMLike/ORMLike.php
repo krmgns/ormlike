@@ -226,7 +226,13 @@ class ORMLike implements Countable, IteratorAggregate
             if (is_array($params)) {
                 $params = array($params);
             }
-            return $this->_db->delete($this->_table, "`{$this->_primaryKey}` IN(?)", $params);
+            $result = $this->_db->delete($this->_table, "`{$this->_primaryKey}` IN(?)", $params);
+            if ($result && property_exists($this, '_relations') && isset($this->_relations['delete']['cascade'])) {
+                foreach ($this->_relations['delete']['cascade'] as $cascade) {
+                    $this->_db->delete($cascade['table'], "`{$cascade['foreignKey']}` IN(?)\n", $params);
+                }
+            }
+            return $result;
         }
         throw new ORMLikeException('There is no criteria enough for delete!');
     }

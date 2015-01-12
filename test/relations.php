@@ -18,26 +18,19 @@ class Users extends ORMLike {
             array('table' => 'users_log', 'foreignKey' => 'user_id'),
             array('table' => 'users_point', 'foreignKey' => 'user_id'),
         )),
-        // @todo
+        // @todo if needs
         // 'update' => array('cascade' => array(
         //     array('table' => 'users_point', 'foreignKey' => 'user_id')
         // )),
-        // @todo
+        // @todo if needs
         // 'insert' => array('cascade' => array('table' => ...)),
     );
 }
 
 $users = new Users();
 
-$user = $users->find(1);
-// $user = $users->findAll();
-$user->remove();
+$users->remove(4);
+$users->remove([4,5,6]);
 
-pre($user);
 pre('...');
-
-
-// $user = $users->findAll();
-// pre($user->toArray());
-// pre('...');
-// pre($users);
+pre($users->findAll()->toArray());
