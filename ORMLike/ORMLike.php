@@ -326,12 +326,12 @@ class ORMLike implements Countable, IteratorAggregate
                             }, $query);
                         }
                     }
-                    // Add where into
-                    $query .= $where;
-                    // Add group by
-                    if (isset($leftJoin['groupBy'])) {
-                        $query .= sprintf(' GROUP BY %s', $leftJoin['groupBy']);
-                    }
+                }
+                // Add where into
+                $query .= $where;
+                // Add group by
+                if (isset($leftJoin['groupBy'])) {
+                    $query .= sprintf(' GROUP BY %s', $leftJoin['groupBy']);
                 }
             } else {
                 // Add just where
