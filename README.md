@@ -120,7 +120,7 @@ class Books extends ORMLike {
         return $this->last_update_date_unix_timestamp;
     }
 
-    // Print book title in anchor
+    // Print book's page link
     public function getPageLink() {
         return sprintf('<a href="book.php?id=%d">%s</a>', $this->id, $this->title);
     }
@@ -128,12 +128,15 @@ class Books extends ORMLike {
 
 $booksObject = new Books();
 
+// Select book object
+$book = $booksObject->find(1);
+
 // You can prefer this way
-$booksObject->setLastUpdateUTS(time());
-print $booksObject->getLastUpdateUTS();
+$book->setLastUpdateUTS(time());
+print $book->getLastUpdateUTS();
 // This also works, your choice
-$booksObject->last_update_date_unix_timestamp = time();
-print $booksObject->last_update_date_unix_timestamp;
+$book->last_update_date_unix_timestamp = time();
+print $book->last_update_date_unix_timestamp;
 
 // Print book link
 print $book->getPageLink();
