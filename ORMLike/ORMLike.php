@@ -229,7 +229,7 @@ class ORMLike implements Countable, IteratorAggregate
             $result = $this->_db->delete($this->_table, "`{$this->_primaryKey}` IN(?)", $params);
             if ($result && property_exists($this, '_relations') && isset($this->_relations['delete']['cascade'])) {
                 foreach ($this->_relations['delete']['cascade'] as $cascade) {
-                    $this->_db->delete($cascade['table'], "`{$cascade['foreignKey']}` IN(?)\n", $params);
+                    $this->_db->delete($cascade['table'], "`{$cascade['foreignKey']}` IN(?)", $params);
                 }
             }
             return $result;
