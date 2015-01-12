@@ -72,6 +72,8 @@ class Books extends ORMLike {
     protected $_table = 'books';
     protected $_primaryKey = 'id';
 
+    // If these properties not defined here, then all get*
+    // actions will throw error unless set* actions used before
     public $id;
     public $title;
     public $price;
