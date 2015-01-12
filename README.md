@@ -134,9 +134,8 @@ print $booksObject->last_update_date_unix_timestamp;
 
 ```php
 // Assuming "id" was already set as primary key.
-// Without external params
-$books = $booksObject->findAll('WHERE id IN(1,2,3)');
-// With external params (here we kick out WHERE)
+$books = $booksObject->findAll('id IN(1,2,3)');
+// Always use this way when working with external data
 $books = $booksObject->findAll('id IN(?)', array(1,2,3));
 $books = $booksObject->findAll('title LIKE ?', "PHP's%"); // Yes, it's safe!
 
@@ -158,7 +157,7 @@ if ($book->isFound()) {
 print 'Found books: '. $book->count();
 
 // Note: "isFound" is useless for "findAll", use "count" instead.
-$books = $booksObject->findAll('WHERE id IN(1,2,3)');
+$books = $booksObject->findAll('id IN(1,2,3)');
 if ($books->count()) {
     print 'Found books: '. $book->count();
 }
@@ -170,7 +169,7 @@ if ($books->count()) {
 $book = $booksObject->find(1);
 $bookArray = $book->toArray();
 // or
-$books = $booksObject->findAll('WHERE id IN(1,2,3)');
+$books = $booksObject->findAll('id IN(1,2,3)');
 $booksArray = $books->toArray();
 ```
 
@@ -178,15 +177,52 @@ $booksArray = $books->toArray();
 
 ```php
 // For "findAll" (or for "find" as well)
-$books = $booksObject->findAll('WHERE id IN(1,2,3)');
+$books = $booksObject->findAll('id IN(1,2,3)');
 foreach ($books as $book) {
     print $book->getTitle();
 }
 ```
 
+- Relations
+
+```php
+class Users extends ORMLike {
+    protected $_table = 'users';
+    protected $_primaryKey = 'id';
+
+    protected $_relations = array(
+        'select' => array('leftJoin' => array(
+            array('table' => 'users_log', 'foreignKey' => 'user_id',
+                  'field' => 'last_login_time', 'fieldPrefix' => '',
+                  'groupBy' => 'users_log.user_id'),
+            array('table' => 'users_point', 'foreignKey' => 'user_id',
+                  'field' => 'Sum(point)', 'fieldPrefix' => '',
+                  'groupBy' => 'users_point.user_id'),
+        )),
+        'delete' => array('cascade' => array(
+            array('table' => 'users_log', 'foreignKey' => 'user_id'),
+            array('table' => 'users_point', 'foreignKey' => 'user_id'),
+        ))
+    );
+}
+
+$users = new Users();
+
+// Get all users with related tables data and see results
+print_r($users->findAll()->toArray());
+
+// Get user with related tables data
+$user = $users->find(1);
+print $user->point;
+
+// Remove all users data from base table with related tables
+$users->remove(4);
+$users->remove(array(4,5,6));
+```
+
 **EXTRA**
 
-- We have a database adapter
+- We have a database adapter here...
 
 ```php
 $db = ORMLikeDatabase::init();

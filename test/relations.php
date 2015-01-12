@@ -29,8 +29,11 @@ class Users extends ORMLike {
 
 $users = new Users();
 
-$users->remove(4);
-$users->remove([4,5,6]);
+// $users->remove(4);
+// $users->remove([4,5,6]);
 
 pre('...');
-pre($users->findAll()->toArray());
+// pre($users->findAll()->toArray());
+
+$user = $users->find(1);
+pre($user->point);
