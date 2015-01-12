@@ -11,7 +11,7 @@ class Users extends ORMLike {
 
     protected $_relations = array(
         'select' => array('leftJoin' => array(
-            array('table' => 'users_log', 'foreignKey' => 'user_id', 'field' => 'last_login_time', 'fieldPrefix' => '', 'groupBy' => 'users_log.user_id'),
+            array('table' => 'users_log', 'foreignKey' => 'user_id', 'field' => 'Sum(point)', 'fieldPrefix' => '', 'groupBy' => 'users_log.user_id'),
             array('table' => 'users_point', 'foreignKey' => 'user_id', 'field' => 'Sum(point)', 'fieldPrefix' => '', 'groupBy' => 'users_point.user_id'),
         )),
         // @todo
