@@ -179,7 +179,7 @@ class ORMLike implements Countable, IteratorAggregate
         }
         $data = $this->_entity->toArray();
         // Clear relations data / prevent columns not match error
-        if (isset($this->_relations['select']['leftJoin'])) {
+        if (property_exists($this, '_relations') && isset($this->_relations['select']['leftJoin'])) {
             foreach ($this->_relations['select']['leftJoin'] as $leftJoin) {
                 $field = preg_split('~\s*,\s*~', $leftJoin['field'], -1, PREG_SPLIT_NO_EMPTY);
                 $field = array_map(function($field){
@@ -193,7 +193,6 @@ class ORMLike implements Countable, IteratorAggregate
                 }
             }
         }
-
         // Insert action
         if (!isset($data[$this->_primaryKey])) {
             if (empty($data)) {
@@ -229,7 +228,7 @@ class ORMLike implements Countable, IteratorAggregate
             }
             return $this->_db->delete($this->_table, "`{$this->_primaryKey}` IN(?)", $params);
         }
-        throw new ORMLikeException('There is no criteria ehough for delete!');
+        throw new ORMLikeException('There is no criteria enough for delete!');
     }
 
     /**

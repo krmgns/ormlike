@@ -27,12 +27,12 @@ class Users extends ORMLike {
     );
 }
 
-
 $users = new Users();
 
 $user = $users->find(1);
-$user->name = 'Kerem';
-$user->save();
+// $user = $users->findAll();
+$user->remove();
+
 pre($user);
 pre('...');
 
