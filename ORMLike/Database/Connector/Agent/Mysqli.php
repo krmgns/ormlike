@@ -2,6 +2,7 @@
 
 use \ORMLike\Helper;
 use \ORMLike\Database\Profiler;
+use \ORMLike\Database\Query\Result;
 use \ORMLike\Exception\Database as Exception;
 
 final class Mysqli
@@ -11,15 +12,15 @@ final class Mysqli
         if (!extension_loaded('mysqli')) {
             throw new \RuntimeException('Mysqli extension is not loaded.');
         }
+        $this->result = new Result\Mysqli();
+        $this->result->setFetchType(
+            isset($configuration['fetch_type'])
+                ? $configuration['fetch_type'] : Result::FETCH_OBJECT
+        );
         $this->profiler = new Profiler();
         $this->configuration = $configuration;
-        // pre($configuration,1);
-        // burdan gelicek fetch_type i result setlerde kullanırsın
-        // eger
     }
-    final public function __destruct()  {
-        $this->disconnect();
-    }
+    final public function __destruct() { $this->disconnect(); }
     final public function __call($method, $arguments) {
         if (!method_exists($this, $method)) {
             throw new \BadMethodCallException(sprintf(
@@ -90,7 +91,8 @@ final class Mysqli
         }
     }
     final public function isConnected() {
-        return ($this->link instanceof \mysqli && $this->link->connect_errno === 0);
+        return ($this->link instanceof \mysqli &&
+                $this->link->connect_errno === 0);
     }
 
     /*** stream wrapper interface ***/
@@ -101,25 +103,23 @@ final class Mysqli
         // if ('' === $this->_query) {
         //     throw new ORMLikeException('Query cannot be empty.');
         // }
-
         // if (null !== $params) {
         //     $this->_query = $this->prepare($query, $params);
         // }
-
         // $this->_timerStart = microtime(true);
 
         if (!$result =@ mysqli_query($this->link, $query)) {
             throw new Exception\QueryException(sprintf(
                 'Query error: query[%s], error[%s]', $query, mysqli_error($this->link)));
         }
-        // $this->setResult($result); // burda result ile oynicak iste...
+        $this->result->process($result);
 
         // $this->_timerStop          = microtime(true);
         // $this->_timerProcess       = number_format(floatval($this->_timerStop - $this->_timerStart), 4);
         // $this->_timerProcessTotal += $this->_timerProcess;
 
-        // return $this->getResult();
-        return $result;
+        return $this->result;
+        // return $result;
     }
 
     final public function find($query, array $params = null, $fetchType = null) {}

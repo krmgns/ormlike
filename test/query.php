@@ -15,7 +15,6 @@ $cfg = [
         'fetch_type' => 'object',
         'charset'    => 'utf8',
         'timezone'   => '+00:00',
-        'port'       => 3306,
         'host'       => 'localhost',
         'name'       => 'test',
         'username'   => 'test',
@@ -28,6 +27,11 @@ $db = Database\Factory::build(new Configuration($cfg));
 $db->connect();
 // pre($db);
 
-$qry = $db->getConnection()->getAgent();
-// $qry = $db->getConnection()->getAgent()->query("select 1");
-pre($qry);
+$result = $db->getConnection()->getAgent()->query("SELECT 1 AS one");
+pre($result);
+
+// pre($result->count());
+
+foreach ($result as $row) {
+    pre("row->one = {$row->one}");
+}
