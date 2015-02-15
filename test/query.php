@@ -1,51 +1,33 @@
 <?php
-header('Content-Type: text/plain');
-
 include('inc.php');
 
-/******************************************/
+$autoload = require('./../ORMLike/Autoload.php');
+$autoload->register();
 
-$query = new ORMLikeQuery('users u');
-$query->select('id,name');
-// $query->select('id,name')->where('id=?', 1);
-// $query->select('id,name')->where('id=?', 1)->whereLike('AND name=?', 'Kerem');
-// $query->select('id,name')->whereLike('id=? AND name=?', ['1%', '%Ke_rem%']);
-// $query->select('id,name')->where('id=?', 1)->whereLike('(id LIKE ? OR name LIKE ?)', ['2%', '%Ke_rem%'], 'OR');
+use \ORMLike\Database as Database;
+use \ORMLike\Configuration as Configuration;
 
-// $query->select('id,name')
-//     ->where('id=?', 1)
-//     ->where('(name=? OR name=? OR old BETWEEN %d AND %d)', ['Kerem', 'Murat', 30, 40], $query::OP_AND)
-// ;
+/*** single ***/
 
-// $query->select('u.*, up.point')
-//     ->aggregate('sum', 'up.point', 'sum_point')
-//     ->joinLeft('users_point up', 'up.user_id=u.id')
-//     ->groupBy('u.id')
-//     ->orderBy('old')
-//     ->having('sum_point > 30')
-//     ->limit(0,10)
-// ;
+$cfg = [
+    'agent' => 'mysqli',
+    'database' => [
+        'fetch_type' => 'object',
+        'charset'    => 'utf8',
+        'timezone'   => '+00:00',
+        'port'       => 3306,
+        'host'       => 'localhost',
+        'name'       => 'test',
+        'username'   => 'test',
+        'password'   => '********',
+        // 'connect_options' => ['mysqli_opt_connect_timeout' => 3],
+    ]
+];
 
-pre($query->toString());
+$db = Database\Factory::build(new Configuration($cfg));
+$db->connect();
+// pre($db);
 
-pre($query->execute());
-// pre($query->get());
-// pre($query->getAll());
-
-// pre($query->execute(function($result) {
-//     $data = array();
-//     while ($row = mysqli_fetch_object($result)) {
-//         $data[] = $row;
-//     }
-//     return $data;
-// }));
-
-// pre($query->getAll(function($result) {
-//     $result = array_filter($result, function($row) {
-//         return ($row->id > 1);
-//     });
-//     return $result;
-// }));
-
-pre('...');
-pre($query);
+$qry = $db->getConnection()->getAgent();
+// $qry = $db->getConnection()->getAgent()->query("select 1");
+pre($qry);

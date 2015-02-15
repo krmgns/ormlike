@@ -1,36 +1,10 @@
 <?php
-// Simple dump
-function pre($input, $exit = false){
-    printf("%s\n", print_r($input, 1));
-    if ($exit) {
-        exit;
-    }
-}
-function prd($input, $exit = false){
-    var_dump($input);
-    if ($exit) {
-        exit;
-    }
-}
-function prr() {
-    $args = func_get_args();
-    foreach ($args as $arg) {
-        pre($arg);
-    }
-}
+header('content-type: text/plain');
 
-define('ORMLIKE_DATABASE_USER', 'root');
-define('ORMLIKE_DATABASE_PASS', '11111111');
-define('ORMLIKE_DATABASE_HOST', 'localhost');
-define('ORMLIKE_DATABASE_NAME', 'test');
-define('ORMLIKE_DATABASE_CHARSET', 'utf8');
-define('ORMLIKE_DATABASE_TIMEZONE', '+00:00');
-
-require(__dir__.'/../ORMLike/ORMLikeException.php');
-require(__dir__.'/../ORMLike/ORMLikeHelper.php');
-require(__dir__.'/../ORMLike/ORMLikeDatabaseAbstract.php');
-require(__dir__.'/../ORMLike/ORMLikeDatabase.php');
-require(__dir__.'/../ORMLike/ORMLikeSql.php');
-require(__dir__.'/../ORMLike/ORMLikeEntity.php');
-require(__dir__.'/../ORMLike/ORMLike.php');
-require(__dir__.'/../ORMLike/ORMLikeQuery.php');
+function pre($input, $e = false) {
+    if ($input === null) $input = 'NULL';
+    printf("%s\n", preg_replace('[(\w+):.*?\:private]', '\\1:private', print_r($input, 1))); $e && exit;
+}
+function prd($input, $e = false) {
+    var_dump($input); print("\n"); $e && exit;
+}

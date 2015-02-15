@@ -1,0 +1,33 @@
+<?php namespace ORMLike;
+
+use \ORMLike\Configuration;
+use \ORMLike\Exception\Database as Exception;
+use \ORMLike\Database\Connector\Connector as Connector;
+
+final class Database
+    implements \ORMLike\Shablon\Database\DatabaseInterface
+{
+    private $info;
+    private $connector;
+
+    final public function __construct(Configuration $configuration) {
+        $this->connector = new Connector($configuration);
+    }
+
+    final public function connect($host = null) {
+        return $this->connector->connect($host);
+    }
+    final public function disconnect($host = null) {
+        return $this->connector->disconnect($host);
+    }
+
+    final public function isConnected($host = null) {
+        return $this->connector->isConnected($host);
+    }
+
+    final public function getConnection($host = null) {
+        return $this->connector->getConnection($host);
+    }
+
+    // final public function info() {}
+}
