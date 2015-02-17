@@ -57,7 +57,7 @@ final class Mysqli
                 if (!defined($option)) {
                     throw new Exception\ArgumentException("`{$option}` option constant is not defined!");
                 }
-                if (!mysqli_options($this->link, constant($option), $value)) {
+                if (!$this->link->options(constant($option), $value)) {
                     throw new Exception\ErrorException("Setting {$option} option failed!");
                 }
             }
@@ -65,26 +65,27 @@ final class Mysqli
 
         $this->profiler && $this->profiler->start(Profiler::CONNECTION);
 
-        if (!mysqli_real_connect($this->link, $host, $username, $password, $name, intval($port), $socket)) {
+        if (!$this->link->real_connect($host, $username, $password, $name, intval($port), $socket)) {
             throw new Exception\ConnectionException(sprintf(
-                'Connection error! errno[%d] errmsg[%s]', mysqli_connect_errno(), mysqli_connect_error()));
+                'Connection error! errno[%d] errmsg[%s]', $this->link->connect_errno, $this->link->connect_error));
         }
 
         $this->profiler && $this->profiler->stop(Profiler::CONNECTION);
 
         if (isset($this->configuration['charset'])) {
-            (bool) $run = mysqli_set_charset($this->link, $this->configuration['charset']);
+            $run = (bool) $this->link->set_charset($this->configuration['charset']);
             if ($run === false) {
                 throw new Exception\ErrorException(sprintf(
                     'Failed setting charset as `%s`! errno[%d] errmsg[%s]',
-                        $this->configuration['charset'], mysqli_connect_errno(), mysqli_error($this->link)));
+                        $this->configuration['charset'], $this->link->errno, $this->link->error));
             }
         }
 
         if (isset($this->configuration['timezone'])) {
-            (bool) $run = mysqli_query($this->link, "SET time_zone='{$this->configuration['timezone']}'");
+            $run = (bool) $this->link->query("SET time_zone='{$this->configuration['timezone']}'");
             if ($run === false) {
-                throw new Exception\QueryException(sprintf('Query error! errmsg[%s]', mysqli_error($this->link)));
+                throw new Exception\QueryException(sprintf(
+                    'Query error! errmsg[%s]', $this->link->error));
             }
         }
 
