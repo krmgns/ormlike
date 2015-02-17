@@ -7,8 +7,10 @@ abstract class Profiler
 {
     const QUERY = 'query';
     const CONNECTION = 'connection';
+    const TRANSACTION = 'transaction';
 
     protected $profiles = [];
+    protected $profiling = true;
 
     public function getProfile($name) {
         if (isset($this->profiles[$name])) {

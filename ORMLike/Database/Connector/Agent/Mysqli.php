@@ -58,6 +58,7 @@ final class Mysqli
             }
         }
 
+        // if (isset($this->configuration['profiling']) && $this->configuration['profiling'] == true)
         $this->profiler->start(Profiler::CONNECTION);
         mysqli_real_connect($this->link, $host, $username, $password, $name, (int) $port, $socket);
         if (mysqli_connect_error()) {
@@ -109,8 +110,18 @@ final class Mysqli
         // $this->_timerStart = microtime(true);
 
         if (!$result =@ mysqli_query($this->link, $query)) {
-            throw new Exception\QueryException(sprintf(
-                'Query error: query[%s], error[%s]', $query, mysqli_error($this->link)));
+            try {
+                throw new Exception\QueryException(sprintf(
+                    'Query error: query[%s], error[%s], errno[%s]', $query,
+                        mysqli_error($this->link), mysqli_errno($this->link)), mysqli_errno($this->link)
+                );
+            } catch (Exception\QueryException $e) {
+                $queryErrorHandler = Helper::getArrayValue('query_error_handler', $this->configuration);
+                if (is_callable($queryErrorHandler)) {
+                    call_user_func($queryErrorHandler, $e, $query, $params);
+                }
+                throw $e;
+            }
         }
         $this->result->process($result);
 
