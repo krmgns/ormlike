@@ -12,12 +12,11 @@ use \ORMLike\Configuration as Configuration;
 $cfg = [
     'agent' => 'mysqli',
     'profiling' => true,
-    'query_logging' => true,
-    'query_logging_path' => '/.logs/db',
-    'query_logging_format' => '%Y-%m-%d',
-    'query_error_handler' => function($e, $query, $params) {
-        pre(func_get_args());
-    },
+    // 'query_logging' => true,
+    // 'query_logging_path' => '/.logs/db',
+    // 'query_logging_format' => 'Y-m-d',
+    // 'query_error_log' => true,
+    // 'query_error_handler' => function($exception, $query, $queryParams) {},
     'database' => [
         'fetch_type' => 'object',
         'charset'    => 'utf8',
@@ -32,13 +31,18 @@ $cfg = [
 
 $db = Database\Factory::build(new Configuration($cfg));
 $db->connect();
-// pre($db);
 
-$result = $db->getConnection()->getAgent()->query("SELECT 1 ASs one", [1]);
+$result = $db->getConnection()->getAgent()->query("select * from users", [1]);
+// $result = $db->getConnection()->getAgent()->query("select * from users", [1]);
+// $result = $db->getConnection()->getAgent()->query("select * from users", [1]);
+// $result = $db->getConnection()->getAgent()->query("select * from users", [1]);
+// $result = $db->getConnection()->getAgent()->query("select * from users where id=1", [1]);
 pre($result);
+
+pre($db);
 
 // pre($result->count());
 
-// foreach ($result as $row) {
-    // pre("row->one = {$row->one}");
-// }
+foreach ($result as $user) {
+    pre($user->name);
+}

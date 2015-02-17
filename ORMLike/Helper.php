@@ -20,7 +20,7 @@ class Helper
     }
 
     // public static function getClassConstantName($class, $name) {
-    //     $rc = new \ReflectionClass(get_class($this));
+    //     $rc = new \ReflectionClass($class);
     //     return $rc->getConstants();
     // }
 }

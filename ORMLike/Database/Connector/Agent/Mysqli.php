@@ -1,6 +1,7 @@
 <?php namespace ORMLike\Database\Connector\Agent;
 
 use \ORMLike\Helper;
+use \ORMLike\Logger;
 use \ORMLike\Database\Profiler;
 use \ORMLike\Database\Query\Result;
 use \ORMLike\Exception\Database as Exception;
@@ -17,16 +18,20 @@ final class Mysqli
             isset($configuration['fetch_type'])
                 ? $configuration['fetch_type'] : Result::FETCH_OBJECT
         );
-        $this->profiler = new Profiler();
         $this->configuration = $configuration;
-    }
-    final public function __destruct() { $this->disconnect(); }
-    final public function __call($method, $arguments) {
-        if (!method_exists($this, $method)) {
-            throw new \BadMethodCallException(sprintf(
-                '`%s::%s()` method does not exists!', __class__, $method));
+
+        $this->logger = new Logger();
+        if (isset($configuration['profiling']) && $configuration['profiling'] == true) {
+            $this->profiler = new Profiler();
         }
     }
+    final public function __destruct() { $this->disconnect(); }
+    // final public function __call($method, $arguments) {
+    //     if (!method_exists($this, $method)) {
+    //         throw new \BadMethodCallException(sprintf(
+    //             '`%s::%s()` method does not exists!', __class__, $method));
+    //     }
+    // }
 
     /*** connection interface ***/
     final public function connect() {
@@ -41,7 +46,7 @@ final class Mysqli
 
         $this->link = mysqli_init();
 
-        // Supported constants: http://php.net/mysqli.real_connect
+        // supported constants: http://php.net/mysqli.real_connect
         if (isset($this->configuration['connect_options'])) {
             foreach ($this->configuration['connect_options'] as $option => $value) {
                 if (!is_string($option)) {
@@ -53,22 +58,22 @@ final class Mysqli
                     throw new Exception\ArgumentException("`{$option}` option constant is not defined!");
                 }
                 if (!mysqli_options($this->link, constant($option), $value)) {
-                    throw new Exception\ErrorException("Setting {$option} option failed! ");
+                    throw new Exception\ErrorException("Setting {$option} option failed!");
                 }
             }
         }
 
-        // if (isset($this->configuration['profiling']) && $this->configuration['profiling'] == true)
-        $this->profiler->start(Profiler::CONNECTION);
-        mysqli_real_connect($this->link, $host, $username, $password, $name, (int) $port, $socket);
-        if (mysqli_connect_error()) {
+        $this->profiler && $this->profiler->start(Profiler::CONNECTION);
+
+        if (!mysqli_real_connect($this->link, $host, $username, $password, $name, intval($port), $socket)) {
             throw new Exception\ConnectionException(sprintf(
                 'Connection error! errno[%d] errmsg[%s]', mysqli_connect_errno(), mysqli_connect_error()));
         }
-        $this->profiler->stop(Profiler::CONNECTION);
+
+        $this->profiler && $this->profiler->stop(Profiler::CONNECTION);
 
         if (isset($this->configuration['charset'])) {
-            $run = (bool) @mysqli_set_charset($this->link, $this->configuration['charset']);
+            (bool) $run = mysqli_set_charset($this->link, $this->configuration['charset']);
             if ($run === false) {
                 throw new Exception\ErrorException(sprintf(
                     'Failed setting charset as `%s`! errno[%d] errmsg[%s]',
@@ -77,7 +82,7 @@ final class Mysqli
         }
 
         if (isset($this->configuration['timezone'])) {
-            $run = (bool) @mysqli_query($this->link, "SET time_zone='{$this->configuration['timezone']}'");
+            (bool) $run = mysqli_query($this->link, "SET time_zone='{$this->configuration['timezone']}'");
             if ($run === false) {
                 throw new Exception\QueryException(sprintf('Query error! errmsg[%s]', mysqli_error($this->link)));
             }
@@ -87,50 +92,54 @@ final class Mysqli
     }
     final public function disconnect() {
         if ($this->link instanceof \mysqli) {
-            mysqli_close($this->link);
+            $this->link->close();
             $this->link = null;
         }
     }
     final public function isConnected() {
-        return ($this->link instanceof \mysqli &&
-                $this->link->connect_errno === 0);
+        return ($this->link instanceof \mysqli && $this->link->connect_errno === 0);
     }
 
     /*** stream wrapper interface ***/
     final public function query($query, array $params = null) {
-        // $this->reset();
-        // ++$this->_queryCount;
-        // $this->_query = trim($query);
-        // if ('' === $this->_query) {
-        //     throw new ORMLikeException('Query cannot be empty.');
-        // }
-        // if (null !== $params) {
-        //     $this->_query = $this->prepare($query, $params);
-        // }
-        // $this->_timerStart = microtime(true);
+        $this->result->reset();
 
-        if (!$result =@ mysqli_query($this->link, $query)) {
+        $query = trim($query);
+        if ($query == '') {
+            throw new Exception\QueryException('Query cannot be empty!');
+        }
+
+        if (!empty($params)) {
+            $query = $this->prepare($query, $params);
+        }
+
+        if ($this->profiler) {
+            $this->profiler->setProperty(Profiler::PROP_QUERY_COUNT);
+            $this->profiler->setProperty(Profiler::PROP_LAST_QUERY, $query);
+        }
+
+        $this->profiler && $this->profiler->start(Profiler::LAST_QUERY);
+        $result = $this->link->query($query);
+        $this->profiler && $this->profiler->stop(Profiler::LAST_QUERY);
+
+        if (!$result) {
             try {
                 throw new Exception\QueryException(sprintf(
-                    'Query error: query[%s], error[%s], errno[%s]', $query,
-                        mysqli_error($this->link), mysqli_errno($this->link)), mysqli_errno($this->link)
-                );
-            } catch (Exception\QueryException $e) {
-                $queryErrorHandler = Helper::getArrayValue('query_error_handler', $this->configuration);
-                if (is_callable($queryErrorHandler)) {
-                    call_user_func($queryErrorHandler, $e, $query, $params);
+                    'Query error: query[%s], error[%s], errno[%s]',
+                        $query, $this->link->error, $this->link->errno
+                ), $this->link->errno);
+            } catch (\Exception $e) {
+                $errorHandler = Helper::getArrayValue('query_error_handler', $this->configuration);
+                if (is_callable($errorHandler)) {
+                    return $errorHandler($e, $query, $params);
                 }
                 throw $e;
             }
         }
-        $this->result->process($result);
 
-        // $this->_timerStop          = microtime(true);
-        // $this->_timerProcess       = number_format(floatval($this->_timerStop - $this->_timerStart), 4);
-        // $this->_timerProcessTotal += $this->_timerProcess;
+        $this->result->process($this->link, $result);
 
         return $this->result;
-        // return $result;
     }
 
     final public function find($query, array $params = null, $fetchType = null) {}
@@ -144,7 +153,9 @@ final class Mysqli
     final public function rowsAffected() {}
 
     /*** stream filter interface ***/
-    final public function prepare($input, array $params = null) {}
+    final public function prepare($input, array $params = null) {
+        return $input;
+    }
     final public function escape($input, $type = null) {}
     final public function escapeIdentifier($input) {}
 }

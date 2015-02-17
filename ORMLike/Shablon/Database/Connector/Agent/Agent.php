@@ -9,6 +9,7 @@ abstract class Agent
 
     protected $link;
     protected $result;
+    protected $logger;
     protected $profiler;
     protected $configuration;
 
@@ -20,7 +21,15 @@ abstract class Agent
         return $this->result;
     }
 
+    public function getLogger() {
+        return $this->logger;
+    }
+
     public function getProfiler() {
+        if (!$this->profiler) {
+            throw new \ErrorException(
+                'Profiler is not found, did you set `profiling` option as true?');
+        }
         return $this->profiler;
     }
 

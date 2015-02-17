@@ -79,20 +79,24 @@ final class Connector
 
     final public function disconnect($host = null) {
         if (isset($this->connections[$host])) {
-            $this->connections[$host]->close(); unset($this->connections[$host]); return;
+            $this->connections[$host]->close();
+            unset($this->connections[$host]);
+            return;
         }
 
         switch (trim($host)) {
             case '':
             case '*':
                 foreach ($this->connections as $i => $connection) {
-                    $connection->close(); unset($this->connections[$i]);
+                    $connection->close();
+                    unset($this->connections[$i]);
                 }
                 break;
             case Connection::TYPE_MASTER:
                 foreach ($this->connections as $i => $connection) {
                     if ($connection->getType() == Connection::TYPE_MASTER) {
-                        $connection->close(); unset($this->connections[$i]);
+                        $connection->close();
+                        unset($this->connections[$i]);
                         break;
                     }
                 }
@@ -100,7 +104,8 @@ final class Connector
             case Connection::TYPE_SLAVE:
                 foreach ($this->connections as $i => $connection) {
                     if ($connection->getType() == Connection::TYPE_SLAVE) {
-                        $connection->close(); unset($this->connections[$i]);
+                        $connection->close();
+                        unset($this->connections[$i]);
                     }
                 }
                 break;

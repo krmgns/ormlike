@@ -71,9 +71,9 @@ $db->connect('slave'); // random
 // $db->connect('slave3.mysql.local'); // no more try to connect
 // $db->connect('slave3.mysql.local'); // no more try to connect
 
-$db->disconnect('*');
 // $db->disconnect('master');
 // $db->disconnect('slave');
+// $db->disconnect('*');
 pre($db);
 
 // pre($db->getConnection());

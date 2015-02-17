@@ -4,4 +4,5 @@ abstract class Result
     implements \IteratorAggregate, \Countable
 {
     abstract public function free();
+    abstract public function reset();
 }
