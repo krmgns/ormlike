@@ -32,17 +32,18 @@ $cfg = [
 $db = Database\Factory::build(new Configuration($cfg));
 $db->connect();
 
-$result = $db->getConnection()->getAgent()->query("select * from users", [1]);
+// $result = $db->getConnection()->getAgent()->query("select * from users", [1]);
 // $result = $db->getConnection()->getAgent()->query("select * from users", [1]);
 // $result = $db->getConnection()->getAgent()->query("select * from users", [1]);
 // $result = $db->getConnection()->getAgent()->query("select * from users", [1]);
 // $result = $db->getConnection()->getAgent()->query("select * from users where id=1", [1]);
+
+// pre($result->count());
+// foreach ($result as $user) {
+//     pre($user->name);
+// }
+
+$result = $db->getConnection()->getAgent()->query("update users set old=30 where id=1", [1]);
 pre($result);
 
 pre($db);
-
-// pre($result->count());
-
-foreach ($result as $user) {
-    pre($user->name);
-}
