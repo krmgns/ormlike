@@ -32,18 +32,20 @@ $cfg = [
 $db = Database\Factory::build(new Configuration($cfg));
 $db->connect();
 
-// $result = $db->getConnection()->getAgent()->query("select * from users", [1]);
-// $result = $db->getConnection()->getAgent()->query("select * from users", [1]);
-// $result = $db->getConnection()->getAgent()->query("select * from users", [1]);
-// $result = $db->getConnection()->getAgent()->query("select * from users", [1]);
-// $result = $db->getConnection()->getAgent()->query("select * from users where id=1", [1]);
+// $result = $db->getConnection()->getAgent()->query("select * from users");
+// $result = $db->getConnection()->getAgent()->query("select * from users");
+// $result = $db->getConnection()->getAgent()->query("select * from users");
+// $result = $db->getConnection()->getAgent()->query("select * from users where id=?", [1]);
+// $result = $db->getConnection()->getAgent()->query("select * from users where id IN(?)", [1,2]);
 
 // pre($result->count());
 // foreach ($result as $user) {
 //     pre($user->name);
 // }
 
-$result = $db->getConnection()->getAgent()->query("update users set old=30 where id=1", [1]);
+$agent = $db->getConnection()->getAgent();
+$result = $agent->query("update users set old=30 where id=?", [1]);
+pre($agent->rowsAffected());
 pre($result);
 
-pre($db);
+// pre($db);
