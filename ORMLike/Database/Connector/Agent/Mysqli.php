@@ -3,6 +3,7 @@
 use \ORMLike\Helper;
 use \ORMLike\Logger;
 use \ORMLike\Database\Profiler;
+use \ORMLike\Database\Query\Sql;
 use \ORMLike\Database\Query\Result;
 use \ORMLike\Exception\Database as Exception;
 
@@ -98,7 +99,8 @@ final class Mysqli
         }
     }
     final public function isConnected() {
-        return ($this->link instanceof \mysqli && $this->link->connect_errno === 0);
+        return ($this->link instanceof \mysqli &&
+                $this->link->connect_errno === 0);
     }
 
     /*** stream wrapper interface ***/
@@ -149,14 +151,42 @@ final class Mysqli
     final public function insert($table, array $data = null) {}
     final public function update($table, array $data = null, $where = '1=1', array $params = null, $limit = null) {}
     final public function delete($table, $where = '1=1', array $params = null, $limit = null) {}
-    final public function id() {}
-    final public function rowsCount() {}
-    final public function rowsAffected() {}
 
     /*** stream filter interface ***/
-    final public function prepare($input, array $params = null) {
+    final public function escape($input, $type = null) {
+        // excepting strings, for all formattable types like %d, %f and %F
+        if (!is_array($input)) {
+            if ($type && $type[0] == '%' && $type != '%s') {
+                return sprintf($type, $input);
+            }
+        }
+
+        if ($input instanceof Sql) {
+            return $input->toString();
+        }
+
+        switch (gettype($input)) {
+            case 'NULL'   : return 'NULL';
+            case 'integer': return $input;
+            // 1/0, afaik true/false not supported yet in mysql
+            case 'boolean': return (int) $input;
+            // %F = non-locale aware
+            case 'double' : return sprintf('%F', $input);
+            // in/not in statements
+            case 'array'  : return join(', ', array_map([$this, 'escape'], $input));
+            // i trust you baby..
+            case 'string' : return "'". $this->link->real_escape_string($input) ."'";
+            default:
+                throw new Exception\ArgumentException(sprintf(
+                    'Unimplemented type encountered! type[`%s`]', gettype($input)));
+        }
+
         return $input;
     }
-    final public function escape($input, $type = null) {}
-    final public function escapeIdentifier($input) {}
+
+    final public function escapeIdentifier($input) {
+        return !is_array($input)
+            ? '`'. trim($input) .'`'
+            : array_map([$this, 'escapeIdentifier'], $input);
+    }
 }

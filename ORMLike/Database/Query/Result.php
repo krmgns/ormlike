@@ -2,15 +2,13 @@
 
 use \ORMLike\Exception\Database as Exception;
 
-class Result
+abstract class Result
     extends \ORMLike\Shablon\Database\Query\Result
 {
     const FETCH_OBJECT       = 1;
     const FETCH_ARRAY_ASSOC  = 2;
     const FETCH_ARRAY_NUM    = 3;
     const FETCH_ARRAY_BOTH   = 4;
-
-    protected $data = [];
 
     protected $result;
     protected $fetchType;
@@ -19,13 +17,7 @@ class Result
     protected $rowsCount = 0;
     protected $rowsAffected = 0;
 
-    public function free() {
-        $this->result = null;
-    }
-
-    public function reset() {
-        $this->data = [];
-    }
+    protected $data = [];
 
     public function setFetchType($fetchType) {
         $fetchTypeConst = 'self::FETCH_'. strtoupper($fetchType);
@@ -49,30 +41,30 @@ class Result
         return new \ArrayIterator($this->data);
     }
 
-    protected function setId($id) {
+    public function setId($id) {
         if ($id === 0) {
             $id = null;
         }
         $this->id = $id;
     }
 
-    protected function getId($id) {
+    public function getId($id) {
         return $this->id;
     }
 
-    protected function setRowsCount($count) {
+    public function setRowsCount($count) {
         $this->rowsCount = $count;
     }
 
-    protected function getRowsCount() {
+    public function getRowsCount() {
         return $this->rowsCount;
     }
 
-    protected function setRowsAffected($count) {
+    public function setRowsAffected($count) {
         $this->rowsAffected = $count;
     }
 
-    protected function getRowsAffected() {
+    public function getRowsAffected() {
         return $this->rowsAffected;
     }
 }
