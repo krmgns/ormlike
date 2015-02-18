@@ -1,6 +1,5 @@
 <?php namespace ORMLike\Database;
 
-use \ORMLike\Helper;
 use \ORMLike\Exception;
 
 final class Profiler
@@ -24,7 +23,7 @@ final class Profiler
             return $this;
         }
 
-        throw new Exception\ErrorException("Could not find a `{$name}` profile name.");
+        throw new Exception\ArgumentException("Could not find a `{$name}` profile name.");
     }
 
     public function setProperty($name, $value = null) {
