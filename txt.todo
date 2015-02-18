@@ -1,2 +1,3 @@
 - Add filter option for find() and findAll() methods (used to filter result sets, see Closure=null)
 - Add filter() method to filter object's entity
+
