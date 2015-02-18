@@ -5,4 +5,5 @@ abstract class Result
 {
     abstract public function free();
     abstract public function reset();
+    abstract public function process($link, $result);
 }
