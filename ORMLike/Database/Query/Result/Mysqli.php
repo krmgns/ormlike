@@ -20,42 +20,49 @@ final class Mysqli
         $this->rowsAffected = 0;
     }
 
-    final public function process($link, $result) {
+    final public function process($link, $result, $limit = null, $fetchType = null) {
         if (!$link instanceof \mysqli) {
             throw new Exception\ArgumentException('Process link must be instanceof mysqli!');
         }
 
         $i = 0;
         if ($result instanceof \mysqli_result && $result->num_rows) {
+            if ($limit == null) {
+                $limit = PHP_INT_MAX;
+            }
+            if ($fetchType == null) {
+                $fetchType = $this->fetchType;
+            }
+
             $this->result = $result;
-            switch ($this->fetchType) {
+            switch ($fetchType) {
                 case self::FETCH_OBJECT:
-                    while ($row = $this->result->fetch_object()) {
+                    while ($i < $limit && $row = $this->result->fetch_object()) {
                         $this->data[$i++] = $row;
                     }
                     $this->free();
                     break;
                 case self::FETCH_ARRAY_ASSOC:
-                    while ($row = $this->result->fetch_assoc()) {
+                    while ($i < $limit && $row = $this->result->fetch_assoc()) {
                         $this->data[$i++] = $row;
                     }
                     $this->free();
                     break;
                 case self::FETCH_ARRAY_NUM:
-                    while ($row = $this->result->fetch_array(MYSQLI_NUM)) {
+                    while ($i < $limit && $row = $this->result->fetch_array(MYSQLI_NUM)) {
                         $this->data[$i++] = $row;
                     }
                     $this->free();
                     break;
                 case self::FETCH_ARRAY_BOTH:
-                    while ($row = $this->result->fetch_array()) {
+                    while ($i < $limit && $row = $this->result->fetch_array()) {
                         $this->data[$i++] = $row;
                     }
                     $this->free();
                     break;
                 default:
                     throw new Exception\ResultException(
-                        "Could not implement given `{$this->fetchType}` fetch type!");
+                        "Could not implement given `{$fetchType}` fetch type!");
             }
         }
 

@@ -4,8 +4,8 @@ interface StreamWrapperInterface
 {
     public function query($query, array $params = null);
 
-    public function find($query, array $params = null, $fetchType = null);
-    public function findAll($query, array $params = null, $fetchType = null);
+    public function get($query, array $params = null, $fetchType = null);
+    public function getAll($query, array $params = null, $fetchType = null);
 
     public function select($table, $fields, $where = '1=1', array $params = null, $limit = null);
     public function insert($table, array $data = null);

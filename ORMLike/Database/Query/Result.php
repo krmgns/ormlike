@@ -13,11 +13,11 @@ abstract class Result
     protected $result;
     protected $fetchType;
 
+    protected $data = [];
+
     protected $id = null; // last insert id
     protected $rowsCount = 0;
     protected $rowsAffected = 0;
-
-    protected $data = [];
 
     public function setFetchType($fetchType) {
         $fetchTypeConst = 'self::FETCH_'. strtoupper($fetchType);
@@ -33,12 +33,8 @@ abstract class Result
         return $this->fetchType;
     }
 
-    public function count() {
-        return count($this->data);
-    }
-
-    public function getIterator() {
-        return new \ArrayIterator($this->data);
+    public function getData() {
+        return $this->data;
     }
 
     public function setId($id) {
@@ -66,5 +62,13 @@ abstract class Result
 
     public function getRowsAffected() {
         return $this->rowsAffected;
+    }
+
+    public function count() {
+        return count($this->data);
+    }
+
+    public function getIterator() {
+        return new \ArrayIterator($this->data);
     }
 }

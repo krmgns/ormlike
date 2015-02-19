@@ -104,7 +104,7 @@ final class Mysqli
     }
 
     /*** stream wrapper interface ***/
-    final public function query($query, array $params = null) {
+    final public function query($query, array $params = null, $fetchType = null) {
         $this->result->reset();
 
         $query = trim($query);
@@ -140,13 +140,19 @@ final class Mysqli
             }
         }
 
-        $this->result->process($this->link, $result);
+        $this->result->process($this->link, $result, $fetchType);
 
         return $this->result;
     }
 
-    final public function find($query, array $params = null, $fetchType = null) {}
-    final public function findAll($query, array $params = null, $fetchType = null) {}
+    // bunlari parent icine alalim?
+    final public function get($query, array $params = null, $fetchType = null) {
+        return $this->query($query, $params, 1, $fetchType)->getData();
+    }
+    final public function getAll($query, array $params = null, $fetchType = null) {
+        return $this->query($query, $params, null, $fetchType)->getData();
+    }
+
     final public function select($table, $fields, $where = '1=1', array $params = null, $limit = null) {}
     final public function insert($table, array $data = null) {}
     final public function update($table, array $data = null, $where = '1=1', array $params = null, $limit = null) {}

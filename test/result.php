@@ -33,8 +33,35 @@ $db = Database\Factory::build(new Configuration($cfg));
 $db->connect();
 
 $agent = $db->getConnection()->getAgent();
-$agent->query("update `users` set `old` = 30 where `id` = ?", [1]);
-pre($agent->rowsAffected());
+
+// $result = $agent->query("select * from `users`");
+// $result = $agent->query("select * from `users`");
+// $result = $agent->query("select * from `users`");
+// $result = $agent->query("select * from `users` where `id` = ?", [1]);
+// $result = $agent->query("select * from `users` where `id` IN(?)", [[1,2]]);
+// $result = $agent->query("select * from `users` where `id` IN(?,?)", [1,2]);
+
+// pre($result->count());
+// foreach ($result as $user) {
+//     pre($user->name);
+// }
+
+// $result = $agent->query("update `users` set `old` = 30 where `id`=?", [1]);
+// pre($agent->rowsAffected());
+// pre($result);
+
+use \ORMLike\Database\Query\Result;
+
+// $result = $agent->get("select * from `users` where `id` = ?", [1]);
+// pre($result);
+// $result = $agent->get("select * from `users`");
+// pre($result);
+
+$result = $agent->getAll("select * from `users`");
+pre($result);
+$result = $agent->getAll("select * from `users` where `id` in(?,?)", [1,2]);
+pre($result);
+
 
 // pre($agent);
 // pre($db);
