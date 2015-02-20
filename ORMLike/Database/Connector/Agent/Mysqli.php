@@ -104,7 +104,7 @@ final class Mysqli
     }
 
     /*** stream wrapper interface ***/
-    final public function query($query, array $params = null, $fetchType = null) {
+    final public function query($query, array $params = null, $limit = null, $fetchType = null) {
         $this->result->reset();
 
         $query = trim($query);
@@ -131,7 +131,7 @@ final class Mysqli
                     'Query error: query[%s], error[%s], errno[%s]',
                         $query, $this->link->error, $this->link->errno
                 ), $this->link->errno);
-            } catch (\Exception $e) {
+            } catch (Exception\QueryException $e) {
                 $errorHandler = Helper::getArrayValue('query_error_handler', $this->configuration);
                 if (is_callable($errorHandler)) {
                     return $errorHandler($e, $query, $params);
@@ -140,7 +140,7 @@ final class Mysqli
             }
         }
 
-        $this->result->process($this->link, $result, $fetchType);
+        $this->result->process($this->link, $result, $limit, $fetchType);
 
         return $this->result;
     }
@@ -153,12 +153,19 @@ final class Mysqli
         return $this->query($query, $params, null, $fetchType)->getData();
     }
 
-    final public function select($table, $fields, $where = '1=1', array $params = null, $limit = null) {}
-    final public function insert($table, array $data = null) {}
-    final public function update($table, array $data = null, $where = '1=1', array $params = null, $limit = null) {}
-    final public function delete($table, $where = '1=1', array $params = null, $limit = null) {}
+    final public function select($table, array $fields, $where = null, array $params = null, $limit = null) {
+        return $this->query(sprintf('SELECT %s FROM %s %s %s',
+                $this->escapeIdentifier($fields),
+                $this->escapeIdentifier($table),
+                $this->where($where, $params),
+                $this->limit($limit)
+        ))->getData();
+    }
 
-    /*** stream filter interface ***/
+    final public function insert($table, array $data = null) {}
+    final public function update($table, array $data = null, $where = null, array $params = null, $limit = null) {}
+    final public function delete($table, $where = null, array $params = null, $limit = null) {}
+
     final public function escape($input, $type = null) {
         // excepting strings, for all formattable types like %d, %f and %F
         if (!is_array($input)) {
@@ -189,10 +196,23 @@ final class Mysqli
 
         return $input;
     }
-
     final public function escapeIdentifier($input) {
         return !is_array($input)
-            ? '`'. trim($input) .'`'
-            : array_map([$this, 'escapeIdentifier'], $input);
+            ? '`'. trim($input, '` ') .'`'
+            : join(', ', array_map([$this, 'escapeIdentifier'], $input));
+    }
+
+    final public function where($where, array $params = null) {
+        if (!empty($params)) {
+            $where = 'WHERE '. $this->prepare($where, $params);
+        }
+        return $where;
+    }
+
+    final public function limit($limit) {
+        if (is_array($limit)) {
+            return sprintf('LIMIT %d, %d', $limit[0], $limit[1]);
+        }
+        return $limit ? sprintf('LIMIT %d', $limit) : '';
     }
 }

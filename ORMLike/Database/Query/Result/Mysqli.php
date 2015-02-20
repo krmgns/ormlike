@@ -14,10 +14,10 @@ final class Mysqli
     }
 
     final public function reset() {
-        $this->data = [];
         $this->id = null;
         $this->rowsCount = 0;
         $this->rowsAffected = 0;
+        $this->data = [];
     }
 
     final public function process($link, $result, $limit = null, $fetchType = null) {
@@ -40,31 +40,30 @@ final class Mysqli
                     while ($i < $limit && $row = $this->result->fetch_object()) {
                         $this->data[$i++] = $row;
                     }
-                    $this->free();
                     break;
                 case self::FETCH_ARRAY_ASSOC:
                     while ($i < $limit && $row = $this->result->fetch_assoc()) {
                         $this->data[$i++] = $row;
                     }
-                    $this->free();
                     break;
                 case self::FETCH_ARRAY_NUM:
                     while ($i < $limit && $row = $this->result->fetch_array(MYSQLI_NUM)) {
                         $this->data[$i++] = $row;
                     }
-                    $this->free();
                     break;
                 case self::FETCH_ARRAY_BOTH:
                     while ($i < $limit && $row = $this->result->fetch_array()) {
                         $this->data[$i++] = $row;
                     }
-                    $this->free();
                     break;
                 default:
+                    $this->free();
                     throw new Exception\ResultException(
                         "Could not implement given `{$fetchType}` fetch type!");
             }
         }
+
+        $this->free();
 
         // set properties
         $this->setId($link->insert_id);

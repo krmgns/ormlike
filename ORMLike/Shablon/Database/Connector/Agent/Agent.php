@@ -42,15 +42,15 @@ abstract class Agent
     }
 
     final public function id() {
-        return $this->result->getId();
+        return isset($this->result) && $this->result->getId();
     }
 
     final public function rowsCount() {
-        return $this->result->getRowsCount();
+        return isset($this->result) && $this->result->getRowsCount();
     }
 
     final public function rowsAffected() {
-        return $this->result->getRowsAffected();
+        return isset($this->result) && $this->result->getRowsAffected();
     }
 
     final public function prepare($input, array $params = null) {
@@ -76,4 +76,7 @@ abstract class Agent
 
         return $input;
     }
+
+    abstract public function where($where, array $params = null);
+    abstract public function limit($limit);
 }
