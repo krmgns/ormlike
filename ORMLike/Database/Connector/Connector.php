@@ -53,10 +53,11 @@ final class Connector
                     }
             }
         }
+
         unset($configuration['database']);
         unset($database['master'], $database['slaves']);
-        $configuration = $configuration + $database;
 
+        $configuration = $configuration + $database;
         if (!isset(
             $configuration['host'],
             $configuration['name'],

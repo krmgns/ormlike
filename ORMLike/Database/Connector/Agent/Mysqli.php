@@ -17,11 +17,19 @@ final class Mysqli
         $this->result = new Result\Mysqli();
         $this->result->setFetchType(
             isset($configuration['fetch_type'])
-                ? $configuration['fetch_type'] : Result::FETCH_OBJECT
+                ? $configuration['fetch_type'] : 'object'
         );
         $this->configuration = $configuration;
 
-        $this->logger = new Logger();
+        if (isset($configuration['query_log']) && $configuration['query_log'] == true) {
+            $this->logger = new Logger();
+            isset($configuration['query_log_level']) &&
+                $this->logger->setLevel($configuration['query_log_level']);
+            isset($configuration['query_log_directory']) &&
+                $this->logger->setDirectory($configuration['query_log_directory']);
+            isset($configuration['query_log_filename_format']) &&
+                $this->logger->setFilenameFormat($configuration['query_log_filename_format']);
+        }
         if (isset($configuration['profiling']) && $configuration['profiling'] == true) {
             $this->profiler = new Profiler();
         }
@@ -29,6 +37,7 @@ final class Mysqli
 
     final public function __destruct() {
         $this->disconnect();
+        restore_error_handler();
     }
 
     final public function connect() {
@@ -111,6 +120,8 @@ final class Mysqli
             $query = $this->prepare($query, $params);
         }
 
+        $this->logger && $this->logger->log(Logger::INFO, $query);
+
         if ($this->profiler) {
             $this->profiler->setProperty(Profiler::PROP_QUERY_COUNT);
             $this->profiler->setProperty(Profiler::PROP_LAST_QUERY, $query);
@@ -127,6 +138,9 @@ final class Mysqli
                         $query, $this->link->error, $this->link->errno
                 ), $this->link->errno);
             } catch (Exception\QueryException $e) {
+                // log query error
+                $this->logger && $this->logger->log(Logger::FAIL, $e->getMessage());
+                // check error handler
                 $errorHandler = Helper::getArrayValue('query_error_handler', $this->configuration);
                 if (is_callable($errorHandler)) {
                     return $errorHandler($e, $query, $params);
@@ -214,8 +228,9 @@ final class Mysqli
             // i trust you baby..
             case 'string' : return "'". $this->link->real_escape_string($input) ."'";
             default:
-                throw new Exception\ArgumentException(sprintf(
-                    'Unimplemented type encountered! type: `%s`', gettype($input)));
+                $error = sprintf('Unimplemented type encountered! type: `%s`', gettype($input));
+                $this->logger && $this->logger->log(Logger::FAIL, $error);
+                throw new Exception\ArgumentException($error);
         }
 
         return $input;
