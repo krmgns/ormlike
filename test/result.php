@@ -51,8 +51,6 @@ $agent = $db->getConnection()->getAgent();
 // pre($agent->rowsAffected());
 // pre($result);
 
-use \ORMLike\Database\Query\Result;
-
 // $result = $agent->get("select * from `users` where `id` = ?", [1]);
 // pre($result);
 // $result = $agent->get("select * from `users`");
@@ -66,9 +64,6 @@ use \ORMLike\Database\Query\Result;
 // $agent->get("select * from `users`");
 // $result = $agent->rowsCount();
 // prd($result);
-
-$result = $agent->select('users', ['id','name']);
-pre($result);
 
 // pre($agent);
 // pre($db);

@@ -44,7 +44,7 @@ abstract class Result
         $this->id = $id;
     }
 
-    public function getId($id) {
+    public function getId() {
         return $this->id;
     }
 

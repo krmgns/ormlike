@@ -28,7 +28,10 @@ final class Profiler
 
     public function setProperty($name, $value = null) {
         if ($name === self::PROP_QUERY_COUNT) {
-            ++$this->properties[$name];
+            if (!isset($this->properties[self::PROP_QUERY_COUNT])) {
+                $this->properties[self::PROP_QUERY_COUNT] = 0;
+            }
+            ++$this->properties[self::PROP_QUERY_COUNT];
         } else {
             $this->properties[$name] = $value;
         }

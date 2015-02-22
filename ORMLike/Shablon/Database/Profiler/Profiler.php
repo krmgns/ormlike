@@ -12,9 +12,7 @@ abstract class Profiler
     const PROP_LAST_QUERY  = 11;
 
     protected $profiles = [];
-    protected $properties = [
-        self::PROP_QUERY_COUNT => 0
-    ];
+    protected $properties = [];
 
     public function getProfile($name) {
         if (isset($this->profiles[$name])) {

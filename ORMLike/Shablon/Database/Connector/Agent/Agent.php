@@ -64,11 +64,11 @@ abstract class Agent
                     );
                 }
                 $i = 0; // Indexes could be string, e.g: array(':id' => 1, ...)
-                foreach ($params as $key => $val) {
+                foreach ($params as $key => $value) {
                     $key = $match[0][$i++];
-                    $val = $this->escape($val, $key);
+                    $value = $this->escape($value, $key);
                     if (false !== ($pos = strpos($input, $key))) {
-                        $input = substr_replace($input, $val, $pos, strlen($key));
+                        $input = substr_replace($input, $value, $pos, strlen($key));
                     }
                 }
             }

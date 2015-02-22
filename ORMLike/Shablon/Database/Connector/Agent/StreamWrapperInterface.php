@@ -8,11 +8,11 @@ interface StreamWrapperInterface
     public function getAll($query, array $params = null, $fetchType = null);
 
     public function select($table, array $fields, $where = null, array $params = null, $limit = null);
-    public function insert($table, array $data = null);
-    public function update($table, array $data = null, $where = null, array $params = null, $limit = null);
+    public function insert($table, array $data);
+    public function update($table, array $data, $where = null, array $params = null, $limit = null);
     public function delete($table, $where = null, array $params = null, $limit = null);
 
-    public function id(); // uuid, guid, serial, sequence, identity, last_insert_id @wtf
+    public function id(); // uuid, guid, serial, sequence, identity, last_insert_id WTF!
     public function rowsCount();
     public function rowsAffected();
 }

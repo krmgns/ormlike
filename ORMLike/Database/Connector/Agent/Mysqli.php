@@ -26,15 +26,11 @@ final class Mysqli
             $this->profiler = new Profiler();
         }
     }
-    final public function __destruct() { $this->disconnect(); }
-    // final public function __call($method, $arguments) {
-    //     if (!method_exists($this, $method)) {
-    //         throw new \BadMethodCallException(sprintf(
-    //             '`%s::%s()` method does not exists!', __class__, $method));
-    //     }
-    // }
 
-    /*** connection interface ***/
+    final public function __destruct() {
+        $this->disconnect();
+    }
+
     final public function connect() {
         list($host, $name, $username, $password) = [
             $this->configuration['host'],
@@ -103,7 +99,6 @@ final class Mysqli
                 $this->link->connect_errno === 0);
     }
 
-    /*** stream wrapper interface ***/
     final public function query($query, array $params = null, $limit = null, $fetchType = null) {
         $this->result->reset();
 
@@ -145,10 +140,10 @@ final class Mysqli
         return $this->result;
     }
 
-    // bunlari parent icine alalim?
     final public function get($query, array $params = null, $fetchType = null) {
         return $this->query($query, $params, 1, $fetchType)->getData();
     }
+
     final public function getAll($query, array $params = null, $fetchType = null) {
         return $this->query($query, $params, null, $fetchType)->getData();
     }
@@ -162,9 +157,38 @@ final class Mysqli
         ))->getData();
     }
 
-    final public function insert($table, array $data = null) {}
-    final public function update($table, array $data = null, $where = null, array $params = null, $limit = null) {}
-    final public function delete($table, $where = null, array $params = null, $limit = null) {}
+    final public function insert($table, array $data) {
+        return $this->query(sprintf(
+            'INSERT INTO %s (%s) VALUES (%s)',
+                $this->escapeIdentifier($table),
+                $this->escapeIdentifier(array_keys($data)),
+                $this->escape(array_values($data))
+        ))->getId();
+    }
+
+    final public function update($table, array $data, $where = null, array $params = null, $limit = null) {
+        $set = [];
+        foreach ($data as $key => $value) {
+            $set[] = sprintf('%s = %s',
+                $this->escapeIdentifier($key), $this->escape($value));
+        }
+        return $this->query(sprintf(
+            'UPDATE %s SET %s %s %s',
+                $this->escapeIdentifier($table),
+                join(', ', $set),
+                $this->where($where, $params),
+                $this->limit($limit)
+        ))->getRowsAffected();
+    }
+
+    final public function delete($table, $where = null, array $params = null, $limit = null) {
+        return $this->query(sprintf(
+            'DELETE FROM %s %s %s',
+                $this->escapeIdentifier($table),
+                $this->where($where, $params),
+                $this->limit($limit)
+        ))->getRowsAffected();
+    }
 
     final public function escape($input, $type = null) {
         // excepting strings, for all formattable types like %d, %f and %F
@@ -191,11 +215,12 @@ final class Mysqli
             case 'string' : return "'". $this->link->real_escape_string($input) ."'";
             default:
                 throw new Exception\ArgumentException(sprintf(
-                    'Unimplemented type encountered! type[`%s`]', gettype($input)));
+                    'Unimplemented type encountered! type: `%s`', gettype($input)));
         }
 
         return $input;
     }
+
     final public function escapeIdentifier($input) {
         return !is_array($input)
             ? '`'. trim($input, '` ') .'`'
