@@ -7,8 +7,6 @@ $autoload->register();
 use \ORMLike\Database as Database;
 use \ORMLike\Configuration as Configuration;
 
-/*** single ***/
-
 $cfg = [
     'agent' => 'mysqli',
     'profiling' => true,

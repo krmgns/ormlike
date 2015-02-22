@@ -8,7 +8,6 @@ use \ORMLike\Database as Database;
 use \ORMLike\Configuration as Configuration;
 
 /*** single ***/
-
 // $cfg = [
 //     'agent' => 'mysqli',
 //     'database' => [
@@ -32,7 +31,6 @@ use \ORMLike\Configuration as Configuration;
 // pre($db->getConnection('localhost'));
 
 /*** sharding ***/
-
 $cfg = [
     'agent' => 'mysqli',
     'sharding' => true,
