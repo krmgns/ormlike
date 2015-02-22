@@ -37,10 +37,6 @@ final class Connection
     final protected function attachAgent() {
         $agentName =@ strtolower($this->configuration['agent']);
         switch ($agentName) {
-            case self::AGENT_PDO:
-                $this->agent = new Agent\Pdo($this->configuration);
-                $this->agentName = $agentName;
-                break;
             case self::AGENT_MYSQLI:
                 $this->agent = new Agent\Mysqli($this->configuration);
                 $this->agentName = $agentName;

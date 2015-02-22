@@ -76,6 +76,9 @@ final class Mysqli
                 'Connection error! errno[%d] errmsg[%s]', $this->link->connect_errno, $this->link->connect_error));
         }
 
+        $this->logger && $this->logger->log(Logger::INFO, sprintf(
+            'New connection via %s', $_SERVER['REMOTE_ADDR']));
+
         $this->profiler && $this->profiler->stop(Profiler::CONNECTION);
 
         if (isset($this->configuration['charset'])) {
@@ -120,7 +123,8 @@ final class Mysqli
             $query = $this->prepare($query, $params);
         }
 
-        $this->logger && $this->logger->log(Logger::INFO, $query);
+        $this->logger && $this->logger->log(Logger::INFO, sprintf(
+            'New query via %s, query[%s]', $_SERVER['REMOTE_ADDR'], $query));
 
         if ($this->profiler) {
             $this->profiler->setProperty(Profiler::PROP_QUERY_COUNT);
@@ -228,9 +232,8 @@ final class Mysqli
             // i trust you baby..
             case 'string' : return "'". $this->link->real_escape_string($input) ."'";
             default:
-                $error = sprintf('Unimplemented type encountered! type: `%s`', gettype($input));
-                $this->logger && $this->logger->log(Logger::FAIL, $error);
-                throw new Exception\ArgumentException($error);
+                throw new Exception\ArgumentException(sprintf(
+                    'Unimplemented type encountered! type: `%s`', gettype($input)));
         }
 
         return $input;

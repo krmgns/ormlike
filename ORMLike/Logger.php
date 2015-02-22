@@ -14,16 +14,16 @@ final class Logger
         $messagePrepend = '';
         switch ($level) {
             case self::FAIL:
-                $messagePrepend = '[FAIL]';
+                $messagePrepend = '[FAIL] ';
                 break;
             case self::INFO:
-                $messagePrepend = '[INFO]';
+                $messagePrepend = '[INFO] ';
                 break;
             case self::WARN:
-                $messagePrepend = '[WARN]';
+                $messagePrepend = '[WARN] ';
                 break;
             case self::DEBUG:
-                $messagePrepend = '[DEBUG]';
+                $messagePrepend = '[DEBUG] ';
                 break;
         }
 
@@ -31,7 +31,7 @@ final class Logger
         $filename = sprintf('%s/%s.txt',
             $this->directory, date($this->filenameFormat));
         // prepare message
-        $message  = sprintf('[%s] %s %s',
+        $message  = sprintf('[%s] %s%s',
             date('D, d M Y H:i:s O'), $messagePrepend, trim($message) ."\n");
 
         file_put_contents($filename, $message, LOCK_EX | FILE_APPEND);

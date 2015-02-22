@@ -112,7 +112,10 @@ final class Connector
                 break;
             default:
                 throw new Exception\ErrorException(
-                    "Could not find any connection with given `{$host}` host.");
+                    empty($host)
+                        ? "Could not find any connection to disconnect."
+                        : "Could not find any connection to disconnect with given `{$host}` host."
+                );
         }
     }
 
@@ -145,7 +148,10 @@ final class Connector
         }
 
         throw new Exception\ErrorException(
-            "Could not find any connection with given `{$host}` host.");
+            empty($host)
+                ? "Could not find any connection to check."
+                : "Could not find any connection to check with given `{$host}` host."
+        );
     }
 
     final public function setConnection($host, Connection $connection) {
@@ -183,6 +189,9 @@ final class Connector
         }
 
         throw new Exception\ErrorException(
-            "Could not find any connection with given `{$host}` host.");
+            empty($host)
+                ? "Could not find any connection to return."
+                : "Could not find any connection to return with given `{$host}` host."
+        );
     }
 }
