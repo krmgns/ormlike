@@ -47,7 +47,7 @@ abstract class Logger
                 '<?php header("HTTP/1.1 404 Not Found"); ?>');
             // this action is for only apache, see nginx configuration here:
             // http://nginx.org/en/docs/http/ngx_http_access_module.html
-            file_put_contents($this->directory .'/.htaccess', "Order deny,allow\r\nDeny from all");
+            // file_put_contents($this->directory .'/.htaccess', "Order deny,allow\r\nDeny from all");
         }
     }
 
