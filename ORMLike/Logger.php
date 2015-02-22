@@ -6,11 +6,15 @@ final class Logger
     extends \ORMLike\Shablon\Logger\Logger
 {
     public function log($level, $message) {
+        // no log command
+        if (!$level || ($level & $this->level) == 0) {
+            return;
+        }
+
         // ensure log directory
         $this->checkDirectory();
 
-        if (($level & $this->level) == 0) return;
-
+        // prepare message prepend
         $messagePrepend = '';
         switch ($level) {
             case self::FAIL:

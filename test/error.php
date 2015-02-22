@@ -26,11 +26,16 @@ use \ORMLike\Configuration as Configuration;
 
 $cfg = [
     'agent' => 'mysqli',
-    'database' => ['host' => 'localhost', 'name' => 'test', 'username' => 'test', 'password' => '********'],
+    'database' => [
+        'host' => 'localhost',
+        'name' => 'test',
+        'username' => 'test',
+        'password' => '********',
+    ],
+    'query_error_handler' => function($exception, $query, $queryParams) {
+        print $exception->getMessage();
+    }
 ];
-$cfg['query_error_handler'] = function($exception, $query, $queryParams) {
-    print $exception->getMessage();
-};
 
 $db = Database\Factory::build(new Configuration($cfg));
 

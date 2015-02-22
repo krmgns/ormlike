@@ -14,7 +14,6 @@ $cfg = [
     'query_log_level' => Logger::ALL,
     'query_log_directory' => __dir__.'/../.logs/db',
     'query_log_filename_format' => 'Y-m-d',
-    // 'query_error_handler' => function($exception, $query, $queryParams) {},
     'database' => [
         'host' => 'localhost',
         'name' => 'test',

@@ -14,7 +14,7 @@ abstract class Logger
     const INFO  = INFO;
     const DEBUG = DEBUG;
 
-    // closed as default
+    // disabled as default
     protected $level = 0;
 
     protected $directory;

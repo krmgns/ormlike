@@ -10,11 +10,6 @@ use \ORMLike\Configuration as Configuration;
 $cfg = [
     'agent' => 'mysqli',
     'profiling' => true,
-    // 'query_logging' => true,
-    // 'query_logging_path' => '/.logs/db',
-    // 'query_logging_format' => 'Y-m-d',
-    // 'query_error_log' => true,
-    // 'query_error_handler' => function($exception, $query, $queryParams) {},
     'database' => [
         'fetch_type' => 'object',
         'charset'    => 'utf8',
@@ -23,7 +18,6 @@ $cfg = [
         'name'       => 'test',
         'username'   => 'test',
         'password'   => '********',
-        // 'connect_options' => ['mysqli_opt_connect_timeout' => 3],
     ]
 ];
 
