@@ -22,6 +22,7 @@ final class Factory
             case 1: return new $className($arguments[0]);
         }
 
-        return (new \ReflectionClass($className))->newInstanceArgs($arguments);
+        return (new \ReflectionClass($className))
+            ->newInstanceArgs($arguments);
     }
 }

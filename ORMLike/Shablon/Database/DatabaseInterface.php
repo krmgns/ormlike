@@ -2,11 +2,9 @@
 
 interface DatabaseInterface
 {
-    // const MASTER = 'master';
-    // const SLAVES = 'slaves';
-
-    // public function connect();
-    // public function disconnect();
-    // public function isConnected();
-    // public function info();
+    public function connect($host = null);
+    public function disconnect($host = null);
+    public function isConnected($host = null);
+    public function getConnection($host = null);
+    public function info();
 }

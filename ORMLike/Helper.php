@@ -18,9 +18,4 @@ class Helper
         }
         return $defaultValue;
     }
-
-    // public static function getClassConstantName($class, $name) {
-    //     $rc = new \ReflectionClass($class);
-    //     return $rc->getConstants();
-    // }
 }

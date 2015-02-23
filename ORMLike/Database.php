@@ -1,8 +1,7 @@
 <?php namespace ORMLike;
 
 use \ORMLike\Configuration;
-use \ORMLike\Exception\Database as Exception;
-use \ORMLike\Database\Connector\Connector as Connector;
+use \ORMLike\Database\Connector\Connector;
 
 final class Database
     implements \ORMLike\Shablon\Database\DatabaseInterface
@@ -29,5 +28,6 @@ final class Database
         return $this->connector->getConnection($host);
     }
 
-    // final public function info() {}
+    // @notimplement
+    final public function info() {}
 }
