@@ -38,21 +38,21 @@ final class Autoload
 
             $require = require($objectFile);
 
-            // if (strripos($objectName, 'interface') !== false) {
-            //     if (!interface_exists($objectName, false)) {
-            //         throw new \RuntimeException(
-            //             "Interface file `{$objectFile}` has been loaded but no " .
-            //             "interface found such as `{$objectName}`.");
-            //     }
+            if (strripos($objectName, 'interface') !== false) {
+                if (!interface_exists($objectName, false)) {
+                    throw new \RuntimeException(
+                        "Interface file `{$objectFile}` has been loaded but no " .
+                        "interface found such as `{$objectName}`.");
+                }
 
-            //     return $require;
-            // }
+                return $require;
+            }
 
-            // if (!class_exists($objectName, false)) {
-            //     throw new \RuntimeException(
-            //         "Class file `{$objectFile}` has been loaded but no " .
-            //         "class found such as `{$objectName}`.");
-            // }
+            if (!class_exists($objectName, false)) {
+                throw new \RuntimeException(
+                    "Class file `{$objectFile}` has been loaded but no " .
+                    "class found such as `{$objectName}`.");
+            }
 
             return $require;
         });
