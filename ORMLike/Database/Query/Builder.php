@@ -243,9 +243,7 @@ final class Builder
                 }
             } elseif (isset($this->query['insert'])) {
                 $agent = $this->connection->getAgent();
-
-                $data  = Helper::getArrayValue('insert', $this->query, []);
-                if (!empty($data)) {
+                if ($data = Helper::getArrayValue('insert', $this->query)) {
                     $keys = $agent->escapeIdentifier(array_keys(current($data)));
                     $values = [];
                     foreach ($data as $d) {
@@ -257,25 +255,25 @@ final class Builder
                 }
             } elseif (isset($this->query['update'])) {
                 $agent = $this->connection->getAgent();
+                if ($data = Helper::getArrayValue('update', $this->query)) {
+                    $set = [];
+                    foreach ($data as $key => $value) {
+                        $set[] = sprintf('%s = %s',
+                            $agent->escapeIdentifier($key), $agent->escape($value));
+                    }
 
-                $set  = [];
-                $data = Helper::getArrayValue('update', $this->query, []);
-                foreach ($data as $key => $value) {
-                    $set[] = sprintf('%s = %s',
-                        $agent->escapeIdentifier($key), $agent->escape($value));
-                }
+                    $this->queryString = sprintf(
+                        "UPDATE {$this->table} SET %s", join(', ', $set));
 
-                $this->queryString = sprintf(
-                    "UPDATE {$this->table} SET %s", join(', ', $set));
-
-                if (isset($this->query['where'])) {
-                    $this->queryString .= sprintf(' WHERE %s', join(' ', $this->query['where']));
-                }
-                if (isset($this->query['orderBy'])) {
-                    $this->queryString .= sprintf(' ORDER BY %s', join(', ', $this->query['orderBy']));
-                }
-                if (isset($this->query['limit'])) {
-                    $this->queryString .= sprintf(' LIMIT %d', $this->query['limit'][0]);
+                    if (isset($this->query['where'])) {
+                        $this->queryString .= sprintf(' WHERE %s', join(' ', $this->query['where']));
+                    }
+                    if (isset($this->query['orderBy'])) {
+                        $this->queryString .= sprintf(' ORDER BY %s', join(', ', $this->query['orderBy']));
+                    }
+                    if (isset($this->query['limit'])) {
+                        $this->queryString .= sprintf(' LIMIT %d', $this->query['limit'][0]);
+                    }
                 }
             } elseif (isset($this->query['delete'])) {
                 $agent = $this->connection->getAgent();
