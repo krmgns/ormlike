@@ -55,12 +55,31 @@ $qb->setTable('users');
 // pre($qb->get());
 // pre($qb->getAll());
 
-$qb->insert(['name' => 'Veli', 'old' => 25]);
-$qb->insert([['name' => 'Veli', 'old' => 25], ['name' => 'Deli', 'old' => 29]]);
-pre($qb->toString());
+// // insert
+// $qb->insert(['name' => 'Veli', 'old' => 25]);
+// $qb->insert([['name' => 'Veli', 'old' => 25], ['name' => 'Deli', 'old' => 29]]);
+// pre($qb->toString());
+// $result = $qb->execute();
+// pre($result);
+// pre($result->getId());
+// pre($result->getId(true));
 
+// // select
 // pre($qb->execute());
 // pre($qb->execute()->getData());
+
+// // // update
+// $qb->update(['old' => 100])->where('id > ?', [30])->limit(1);
+// $qb->update(['old' => 100])->where('id > ?', [30])->orderBy('id DESC')->limit(1);
+// pre($qb->toString());
+// pre($qb->execute());
+
+// // delete
+// $qb->delete()->where('id > ?', [30])->limit(1);
+// $qb->delete()->where('id > ?', [30])->orderBy('id DESC')->limit(1);
+// $qb->delete()->where('id > ?', [30])->orderBy('id', $qb::OP_DESC)->limit(1);
+// pre($qb->toString());
+// pre($qb->execute());
 
 pre($qb);
 pre($qb->toString());

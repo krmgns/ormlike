@@ -1,5 +1,8 @@
 <?php namespace ORMLike\Database\Query;
 
+use \ORMLike\Helper;
+use \ORMLike\Database\Connector\Connection;
+
 final class Builder
 {
     // Operators
@@ -16,38 +19,43 @@ final class Builder
 
     private $connection;
 
-    public function __construct(\ORMLike\Database\Connector\Connection $connection) {
+    final public function __construct(Connection $connection) {
         $this->connection = $connection;
     }
 
-    public function __toString() {
+    final public function __toString() {
         return $this->toString();
     }
 
-    public function setTable($table) {
+    final public function getConnection() {
+        return $this->connection;
+    }
+
+    final public function setTable($table) {
         $this->table = $table;
     }
-    public function getTable() {
+    final public function getTable() {
         return $this->table;
     }
 
-    protected function push($key, $value) {
-        // Set query sub array
-        if (!isset($this->query[$key])) {
-            $this->query[$key] = [];
+    protected function push($key, $value, $multi = true) {
+        if ($multi) {
+            // Set query sub array
+            $this->query[$key][] = $value;
+        } else {
+            $this->query[$key] = $value;
         }
-        $this->query[$key][] = $value;
 
         return $this;
     }
 
-    public function reset() {
+    final public function reset() {
         $this->query = [];
         $this->queryString = '';
         return $this;
     }
 
-    public function select($field = null) {
+    final public function select($field = null) {
         $this->reset();
         // pass for aggregate method, e.g select().aggregate('count', 'id')
         if (empty($field)) {
@@ -56,22 +64,26 @@ final class Builder
         return $this->push('select', $field);
     }
 
-    public function insert(array $data) {
+    final public function insert(array $data) {
         $this->reset();
-        // simply check is assoc?
-        foreach ($data as $key => $value) {
-            if (is_string($key)) {
-                $data = [$data];
-                break;
-            }
+        // simply check is not assoc to prepare multi-insert
+        if (!isset($data[0])) {
+            $data = [$data];
         }
-        $this->push('insert', $data);
+        return $this->push('insert', $data, false);
     }
 
-    public function update(array $data) {}
-    public function delete() {}
+    final public function update(array $data) {
+        $this->reset();
+        return $this->push('update', $data, false);
+    }
 
-    public function joinLeft($table, $on, array $params = null) {
+    final public function delete() {
+        $this->reset();
+        return $this->push('delete', true, false);
+    }
+
+    final public function joinLeft($table, $on, array $params = null) {
         // Prepare params safely
         if (!empty($params)) {
             $on = $this->connection->getAgent()->prepare($on, $params);
@@ -80,7 +92,7 @@ final class Builder
         return $this->push('join', sprintf('%s ON %s', $table, $on));
     }
 
-    public function joinLeftUsing($table, $using, array $params = null) {
+    final public function joinLeftUsing($table, $using, array $params = null) {
         // Prepare params safely
         if (!empty($params)) {
             $using = $this->connection->getAgent()->prepare($using, $params);
@@ -89,7 +101,7 @@ final class Builder
         return $this->push('join', sprintf('%s USING (%s)', $table, $using));
     }
 
-    public function where($query, array $params = null, $op = self::OP_AND) {
+    final public function where($query, array $params = null, $op = self::OP_AND) {
         if (!empty($params)) {
             $query = $this->connection->getAgent()->prepare($query, $params);
         }
@@ -100,7 +112,7 @@ final class Builder
         return $this->push('where', $query);
     }
 
-    public function whereLike($query, array $params = null, $op = self::OP_AND) {
+    final public function whereLike($query, array $params = null, $op = self::OP_AND) {
         if (!empty($params)) {
             foreach ($params as &$param) {
                 $charFirst = strval($param[0]);
@@ -123,15 +135,15 @@ final class Builder
         return $this->where($query, $params, $op);
     }
 
-    public function whereNull($field) {
+    final public function whereNull($field) {
         return $this->push('where', sprintf('%s IS NULL', $field));
     }
 
-    public function whereNotNull($field) {
+    final public function whereNotNull($field) {
         return $this->push('where', sprintf('%s IS NOT NULL', $field));
     }
 
-    public function having($query, array $params = null) {
+    final public function having($query, array $params = null) {
         if (!empty($params)) {
             $query = $this->connection->getAgent()->prepare($query, $params);
         }
@@ -139,21 +151,24 @@ final class Builder
         return $this->push('having', $query);
     }
 
-    public function groupBy($field) {
+    final public function groupBy($field) {
         return $this->push('groupBy', $field);
     }
 
-    public function orderBy($field, $op = self::OP_ASC) {
-        return $this->push('orderBy', $field .' '. $op);
+    final public function orderBy($field, $op = null) {
+        if ($op == self::OP_ASC || $op == self::OP_DESC) {
+            return $this->push('orderBy', $field .' '. $op);
+        }
+        return $this->push('orderBy', $field);
     }
 
-    public function limit($start, $stop = null) {
+    final public function limit($start, $stop = null) {
         return ($stop === null)
             ? $this->push('limit', $start)
             : $this->push('limit', $start)->push('limit', $stop);
     }
 
-    public function aggregate($aggr, $field = '*', $fieldAlias = null) {
+    final public function aggregate($aggr, $field = '*', $fieldAlias = null) {
         if (empty($fieldAlias)) {
             $fieldAlias = ($field && $field != '*')
                 // aggregate('count', 'id') count_id
@@ -165,7 +180,7 @@ final class Builder
         ));
     }
 
-    public function execute(callable $callback = null) {
+    final public function execute(callable $callback = null) {
         $result = $this->connection->getAgent()->query($this->toString());
         // Render result if callback provided
         if (is_callable($callback)) {
@@ -175,7 +190,7 @@ final class Builder
         return $result;
     }
 
-    public function get(callable $callback = null) {
+    final public function get(callable $callback = null) {
         $result = $this->connection->getAgent()->get($this->toString());
         if (is_callable($callback)) {
             $result = $callback($result);
@@ -184,7 +199,7 @@ final class Builder
         return $result;
     }
 
-    public function getAll(callable $callback = null) {
+    final public function getAll(callable $callback = null) {
         $result = $this->connection->getAgent()->getAll($this->toString());
         if (is_callable($callback)) {
             $result = $callback($result);
@@ -193,7 +208,7 @@ final class Builder
         return $result;
     }
 
-    public function toString() {
+    final public function toString() {
         // Set once query string
         if (!empty($this->query) && empty($this->queryString)) {
             // Add select statement
@@ -237,20 +252,55 @@ final class Builder
                         ? sprintf(' LIMIT %d', $this->query['limit'][0])
                         : sprintf(' LIMIT %d,%d', $this->query['limit'][0], $this->query['limit'][1]);
                 }
-            } elseif (isset($this->query['insert']) && !empty($this->query['insert'])) {
+            } elseif (isset($this->query['insert'])) {
                 $agent = $this->connection->getAgent();
 
-                $keys = $values = [];
-                foreach (current($this->query['insert']) as $insert) {
-                    $keys = $agent->escapeIdentifier(array_keys($insert));
-                    foreach ($insert as $key => $value) {
-                        $values[] = '('. $agent->escape($value) .')';
+                $data  = Helper::getArrayValue('insert', $this->query, []);
+                if (!empty($data)) {
+                    $keys = $agent->escapeIdentifier(array_keys(current($data)));
+                    $values = [];
+                    foreach ($data as $d) {
+                        $values[] = '('. $agent->escape(array_values($d)) .')';
                     }
-                }
-                // pre($keys,1);
 
-                $this->queryString = sprintf("INSERT INTO {$this->table} (%s) VALUES %s",
-                    join(',', $keys), join(', ', $values));
+                    $this->queryString = sprintf(
+                        "INSERT INTO {$this->table} ({$keys}) VALUES %s", join(', ', $values));
+                }
+            } elseif (isset($this->query['update'])) {
+                $agent = $this->connection->getAgent();
+
+                $set  = [];
+                $data = Helper::getArrayValue('update', $this->query, []);
+                foreach ($data as $key => $value) {
+                    $set[] = sprintf('%s = %s',
+                        $agent->escapeIdentifier($key), $agent->escape($value));
+                }
+
+                $this->queryString = sprintf(
+                    "UPDATE {$this->table} SET %s", join(', ', $set));
+
+                if (isset($this->query['where'])) {
+                    $this->queryString .= sprintf(' WHERE %s', join(' ', $this->query['where']));
+                }
+                if (isset($this->query['orderBy'])) {
+                    $this->queryString .= sprintf(' ORDER BY %s', join(', ', $this->query['orderBy']));
+                }
+                if (isset($this->query['limit'])) {
+                    $this->queryString .= sprintf(' LIMIT %d', $this->query['limit'][0]);
+                }
+            } elseif (isset($this->query['delete'])) {
+                $agent = $this->connection->getAgent();
+
+                $this->queryString = "DELETE FROM {$this->table}";
+                if (isset($this->query['where'])) {
+                    $this->queryString .= sprintf(' WHERE %s', join(' ', $this->query['where']));
+                }
+                if (isset($this->query['orderBy'])) {
+                    $this->queryString .= sprintf(' ORDER BY %s', join(', ', $this->query['orderBy']));
+                }
+                if (isset($this->query['limit'])) {
+                    $this->queryString .= sprintf(' LIMIT %d', $this->query['limit'][0]);
+                }
             }
 
             $this->queryString = trim($this->queryString);

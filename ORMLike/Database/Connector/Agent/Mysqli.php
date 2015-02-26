@@ -176,11 +176,22 @@ final class Mysqli
     }
 
     final public function insert($table, array $data) {
+        // simply check is not assoc to prepare multi-insert
+        if (!isset($data[0])) {
+            $data = [$data];
+        }
+
+        $keys = array_keys(current($data));
+        $values = [];
+        foreach ($data as $d) {
+            $values[] = '('. $this->escape(array_values($d)) .')';
+        }
+
         return $this->query(sprintf(
-            'INSERT INTO %s (%s) VALUES (%s)',
+            'INSERT INTO %s (%s) VALUES %s',
                 $this->escapeIdentifier($table),
-                $this->escapeIdentifier(array_keys($data)),
-                $this->escape(array_values($data))
+                $this->escapeIdentifier($keys),
+                join(',', $values)
         ))->getId();
     }
 
@@ -190,6 +201,7 @@ final class Mysqli
             $set[] = sprintf('%s = %s',
                 $this->escapeIdentifier($key), $this->escape($value));
         }
+
         return $this->query(sprintf(
             'UPDATE %s SET %s %s %s',
                 $this->escapeIdentifier($table),

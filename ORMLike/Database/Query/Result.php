@@ -15,7 +15,7 @@ abstract class Result
 
     protected $data = [];
 
-    protected $id = null; // last insert id
+    protected $id = []; // last insert id(s)
     protected $rowsCount = 0;
     protected $rowsAffected = 0;
 
@@ -38,14 +38,13 @@ abstract class Result
     }
 
     public function setId($id) {
-        if ($id === 0) {
-            $id = null;
-        }
-        $this->id = $id;
+        $this->id = (array) $id;
     }
 
-    public function getId() {
-        return $this->id;
+    public function getId($all = false) {
+        return $all
+            ? $this->id       // all insert ids
+            : end($this->id); // only last insert id
     }
 
     public function setRowsCount($count) {

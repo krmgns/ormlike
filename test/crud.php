@@ -29,6 +29,7 @@ $agent = $db->getConnection()->getAgent();
 
 // $result = $agent->select('users', ['id','name']);
 // $result = $agent->insert('users', ['name' => 'Ferhat', 'old' => 50]);
+// $result = $agent->insert('users', [['name' => 'Ferhat', 'old' => 50],['name' => 'Serhat', 'old' => 60]]);
 // $result = $agent->update('users', ['name' => 'Veli', 'old' => 60], 'id=?', [6]);
 // $result = $agent->delete('users', 'id=?', [6]);
 // $result = $agent->delete('users', 'id in (?,?,?)', [4,5,6]);

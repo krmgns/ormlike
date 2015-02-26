@@ -65,8 +65,32 @@ final class Mysqli
 
         $this->free();
 
+        // dirty ways to detect last insert id for multiple inserts
+        // good point! http://stackoverflow.com/a/15664201/362780
+        $id  = $link->insert_id;
+        $ids = [];
+
+        /**
+         * // only last id
+         * if ($id && $link->affected_rows > 1) {
+         *     $id = ($id + $link->affected_rows) - 1;
+         * }
+         *
+         * // all ids
+         * if ($id && $link->affected_rows > 1) {
+         *     for ($i = 0; $i < $link->affected_rows - 1; $i++) {
+         *         $ids[] = $id + 1;
+         *     }
+         * }
+         */
+
+        // all ids
+        if ($id && $link->affected_rows > 1) {
+            $ids = range($id, ($id + $link->affected_rows) - 1);
+        }
+
         // set properties
-        $this->setId($link->insert_id);
+        $this->setId($ids);
         $this->setRowsCount($i);
         $this->setRowsAffected($link->affected_rows);
     }
