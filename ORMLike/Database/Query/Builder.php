@@ -19,12 +19,18 @@ final class Builder
 
     private $connection;
 
-    final public function __construct(Connection $connection) {
-        $this->connection = $connection;
+    final public function __construct(Connection $connection = null) {
+        if ($connection) {
+            $this->setConnection($connection);
+        }
     }
 
     final public function __toString() {
         return $this->toString();
+    }
+
+    final public function setConnection(Connection $connection) {
+        $this->connection = $connection;
     }
 
     final public function getConnection() {
