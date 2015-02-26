@@ -38,17 +38,6 @@ final class Builder
         return $this->table;
     }
 
-    protected function push($key, $value, $multi = true) {
-        if ($multi) {
-            // Set query sub array
-            $this->query[$key][] = $value;
-        } else {
-            $this->query[$key] = $value;
-        }
-
-        return $this;
-    }
-
     final public function reset() {
         $this->query = [];
         $this->queryString = '';
@@ -307,5 +296,16 @@ final class Builder
         }
 
         return $this->queryString;
+    }
+
+    final protected function push($key, $value, $multi = true) {
+        if ($multi) {
+            // Set query as sub array
+            $this->query[$key][] = $value;
+        } else {
+            $this->query[$key] = $value;
+        }
+
+        return $this;
     }
 }
