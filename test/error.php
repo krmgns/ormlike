@@ -4,8 +4,8 @@ include('inc.php');
 $autoload = require('./../ORMLike/Autoload.php');
 $autoload->register();
 
-use \ORMLike\Database as Database;
-use \ORMLike\Configuration as Configuration;
+use \ORMLike\Database;
+use \ORMLike\Configuration;
 
 // $cfg = [
 //     'agent' => 'mysqli',

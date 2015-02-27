@@ -4,9 +4,9 @@ include('inc.php');
 $autoload = require('./../ORMLike/Autoload.php');
 $autoload->register();
 
-use \ORMLike\Logger as Logger;
-use \ORMLike\Database as Database;
-use \ORMLike\Configuration as Configuration;
+use \ORMLike\Logger;
+use \ORMLike\Database;
+use \ORMLike\Configuration;
 
 $cfg = [
     'agent' => 'mysqli',
@@ -29,6 +29,7 @@ $cfg = [
 $db = Database\Factory::build(new Configuration($cfg));
 $db->connect();
 
+// @tmp
 // $db->getConnection()->getAgent()->query('delete from users where id > 10');
 
 $batch = $db->getConnection()->getAgent()->getBatch();
