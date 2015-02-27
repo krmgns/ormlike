@@ -21,11 +21,11 @@ abstract class Result
 
     public function setFetchType($fetchType) {
         if (is_integer($fetchType)) {
-            if (in_array($fetchType, [1, 2, 3, 4])) {
-                $this->fetchType = constant($fetchTypeConst);
+            if (!in_array($fetchType, [1, 2, 3, 4])) {
+                throw new Exception\ArgumentException(
+                    "Given `{$fetchType}` fetch type is not implemented!");
             }
-            throw new Exception\ArgumentException(
-                "Given `{$fetchType}` fetch type is not implemented!");
+            $this->fetchType = $fetchType;
         } else {
             $fetchTypeConst = 'self::FETCH_'. strtoupper($fetchType);
             if (!defined($fetchTypeConst)) {
