@@ -6,6 +6,7 @@ abstract class Agent
     implements ConnectionInterface, StreamFilterInterface, StreamWrapperInterface
 {
     protected $link;
+    protected $batch;
     protected $result;
     protected $logger;
     protected $profiler;
@@ -13,6 +14,10 @@ abstract class Agent
 
     public function getLink() {
         return $this->link;
+    }
+
+    public function getBatch() {
+        return $this->batch;
     }
 
     public function getResult() {

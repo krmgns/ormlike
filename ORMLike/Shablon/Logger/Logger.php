@@ -45,7 +45,8 @@ abstract class Logger
                 'Define it using `query_log_directory` key to activate logging.');
         }
 
-        if (!$this->directoryChecked && !is_dir($this->directory)) {
+        $this->directoryChecked = $this->directoryChecked ?: is_dir($this->directory);
+        if (!$this->directoryChecked) {
             $this->directoryChecked = mkdir($this->directory, 0755, true);
 
             // !!! notice !!!

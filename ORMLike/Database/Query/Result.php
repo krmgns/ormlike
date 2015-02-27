@@ -20,13 +20,20 @@ abstract class Result
     protected $rowsAffected = 0;
 
     public function setFetchType($fetchType) {
-        $fetchTypeConst = 'self::FETCH_'. strtoupper($fetchType);
-        if (!defined($fetchTypeConst)) {
+        if (is_integer($fetchType)) {
+            if (in_array($fetchType, [1, 2, 3, 4])) {
+                $this->fetchType = constant($fetchTypeConst);
+            }
             throw new Exception\ArgumentException(
                 "Given `{$fetchType}` fetch type is not implemented!");
+        } else {
+            $fetchTypeConst = 'self::FETCH_'. strtoupper($fetchType);
+            if (!defined($fetchTypeConst)) {
+                throw new Exception\ArgumentException(
+                    "Given `{$fetchType}` fetch type is not implemented!");
+            }
+            $this->fetchType = constant($fetchTypeConst);
         }
-
-        $this->fetchType = constant($fetchTypeConst);
     }
 
     public function getFetchType() {

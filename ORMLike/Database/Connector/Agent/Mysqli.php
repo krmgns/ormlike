@@ -2,6 +2,7 @@
 
 use \ORMLike\Helper;
 use \ORMLike\Logger;
+use \ORMLike\Database\Batch;
 use \ORMLike\Database\Profiler;
 use \ORMLike\Database\Query\Sql;
 use \ORMLike\Database\Query\Result;
@@ -14,11 +15,15 @@ final class Mysqli
         if (!extension_loaded('mysqli')) {
             throw new \RuntimeException('Mysqli extension is not loaded.');
         }
+
+        $this->batch = new Batch\Mysqli($this);
+
         $this->result = new Result\Mysqli();
         $this->result->setFetchType(
             isset($configuration['fetch_type'])
-                ? $configuration['fetch_type'] : 'object'
+                ? $configuration['fetch_type'] : Result::FETCH_OBJECT
         );
+
         $this->configuration = $configuration;
 
         if (isset($configuration['query_log']) && $configuration['query_log'] == true) {
@@ -37,7 +42,6 @@ final class Mysqli
 
     final public function __destruct() {
         $this->disconnect();
-        restore_error_handler();
     }
 
     final public function connect() {
@@ -138,7 +142,7 @@ final class Mysqli
         if (!$result) {
             try {
                 throw new Exception\QueryException(sprintf(
-                    'Query error: query[%s], error[%s], errno[%s]',
+                    'Query error: query[%s], errmsg[%s], errno[%s]',
                         $query, $this->link->error, $this->link->errno
                 ), $this->link->errno);
             } catch (Exception\QueryException $e) {
