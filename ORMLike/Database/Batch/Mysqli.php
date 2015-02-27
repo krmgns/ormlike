@@ -22,6 +22,10 @@ final class Mysqli
     }
 
     final public function run() {
+        if (empty($this->queue)) {
+            return;
+        }
+
         $link = $this->agent->getLink();
 
         $start = microtime(true);
