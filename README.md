@@ -1,4 +1,6 @@
-This project is migrated to [Oppa](//github.com/qeremy/oppa).
+<center>**This project has been migrated to [Oppa](//github.com/qeremy/oppa).**</center>
+
+<hr>
 
 #### ORMLike
 
