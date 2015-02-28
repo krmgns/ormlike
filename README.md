@@ -1,3 +1,5 @@
+This project is migrated to [Oppa](//github.com/qeremy/oppa).
+
 #### ORMLike
 
 ORMLike is an application that implements ORM (Object-Relational Mapping) concept with PHP and gives you availability to handle database transactions using ORM's simplity getting rid of SQL's pain. It contains and query builder and database adaptor that uses MySQLi extension of PHP.
