@@ -1,5 +1,0 @@
-- add transaction support
-- add pdo support
-- add filter option for get() and getall() methods (used to filter result sets, see \closure=null)
-- add filter() method to filter object's entity
-
