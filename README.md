@@ -11,7 +11,7 @@ Enjoy it!
 
 ##### Using
 
-// Needs PHP version >= 5.4 and MySQLi
+// Needs PHP version >= 5.3 and MySQLi
 
 ```php
 // Set database config that used in ORMLikeDatabaseAbstract
