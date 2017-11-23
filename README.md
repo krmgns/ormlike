@@ -1,4 +1,4 @@
-<center>This project has been migrated to [Oppa](//github.com/k-gun/oppa).</center>
+This project has been migrated to [Oppa](https://github.com/k-gun/oppa).
 
 <hr>
 
